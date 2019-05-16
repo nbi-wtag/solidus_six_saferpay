@@ -22,6 +22,8 @@ module Spree
           @token = payment_page_initialize.params[:Token]
           @redirect_url = payment_page_initialize.params[:RedirectUrl]
           SaferpayPayment.create!(order: order, token: token)
+        else
+          raise "PaymentPageInitialize not successful"
         end
         self
       end
