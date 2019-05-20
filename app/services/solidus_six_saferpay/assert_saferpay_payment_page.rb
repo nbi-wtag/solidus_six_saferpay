@@ -3,7 +3,7 @@ module SolidusSixSaferpay
   # TODO: SPEC
   class AssertSaferpayPaymentPage
 
-    attr_reader :saferpay_payment, :token, :order, :success
+    attr_reader :saferpay_payment, :token, :order, :payment, :success
 
     def self.call(saferpay_payment)
       new(saferpay_payment).call
@@ -21,7 +21,7 @@ module SolidusSixSaferpay
       if payment_page_assert.success?
         payment_attributes = extract_payment_attributes(payment_page_assert.params)
 
-        payment = Spree::PaymentCreate.new(order, payment_attributes).build
+        @payment = Spree::PaymentCreate.new(order, payment_attributes).build
 
         if payment.save!
           @success = true
@@ -56,7 +56,7 @@ module SolidusSixSaferpay
           number: payment_means[:DisplayText],
           month: payment_means[:Card][:ExpMonth],
           year: payment_means[:Card][:ExpMonth],
-          cc_type: payment_means[:Brand][:PaymentMethod],
+          cc_type: payment_means[:Brand][:PaymentMethod].downcase,
           name: payment_means[:Card][:HolderName],
         }
       }
@@ -64,13 +64,9 @@ module SolidusSixSaferpay
 
     def normalized_amount(cents_string)
       cents = cents_string.to_i
-
-      amount, remainder = cents.divmod(100)
-      if !remainder.zero?
-        raise "Remainder not zero, #{cents} can not be normalized"
-      end
-
-      amount
+      cents.to_d / 100
+    rescue StandardError => e
+      raise "Could not convert string '#{cents_string}' to BigDecimal to store as Payment amount: #{e}"
     end
   end
 end

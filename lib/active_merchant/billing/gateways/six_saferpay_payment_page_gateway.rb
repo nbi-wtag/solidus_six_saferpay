@@ -73,13 +73,13 @@ module ActiveMerchant
             (order.total * 100).to_i,
             order.currency,
             order.number,
-            order.to_s
+            order.number
           )
 
           saferpay_response = SixSaferpay::Client.post(payment_page_initialize)
-
           # TODO: Let the client handle this
           response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
+
           response = InitializeResponse.new(
             token: response_hash[:Token],
             expiration: response_hash[:Expiration],

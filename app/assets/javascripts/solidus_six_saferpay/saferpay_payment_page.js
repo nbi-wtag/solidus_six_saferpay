@@ -34,9 +34,13 @@ var SaferpayPaymentPage = function() {
     });
   }
 
+  var exitIframe = function() {
+    if (top.location != location){
+      top.location.href = document.location.href;
+    }
+  }
+
   var redirectExternal = function(redirectUrl) {
-    console.log("REDIRECT URL");
-    console.log(redirectUrl);
     $(window).attr('location', redirectUrl);
   }
 
@@ -46,7 +50,12 @@ var SaferpayPaymentPage = function() {
       getRedirectUrl(loadIframe);
     },
     redirectExternal: function() {
-      getRedirectUrl(redirectExternal);
+      $(document).on("submit", "#checkout_form_payment", function() {
+        getRedirectUrl(redirectExternal);
+      });
+    },
+    exitIframe: function() {
+      exitIframe();
     }
   }
 }();

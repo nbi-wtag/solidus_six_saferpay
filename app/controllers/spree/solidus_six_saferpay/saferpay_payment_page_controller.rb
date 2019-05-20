@@ -7,6 +7,7 @@ module Spree
         load_order
         payment_page_initialize = ::SolidusSixSaferpay::InitializeSaferpayPaymentPage.call(@order)
 
+
         if payment_page_initialize.success?
           redirect_url = payment_page_initialize.redirect_url
           render json: { redirect_url: redirect_url }
@@ -18,7 +19,6 @@ module Spree
       def success
         load_order
 
-        # TODO: FIND A BETTER WAY OF FINDING THE CORRESPONDING SAFERPAY TOKEN
         saferpay_payment = ::SolidusSixSaferpay::SaferpayPayment.where(order: @order).order(:created_at).last
 
         unless saferpay_payment
@@ -29,7 +29,15 @@ module Spree
 
         if payment_page_assert.success?
           @order.next! if @order.payment?
-          redirect_to order_checkout_path(@order.state)
+
+          payment_method = payment_page_assert.payment.payment_method
+
+          @redirect_path = order_checkout_path(@order.state)
+          if payment_method.preferred_as_iframe
+            render :iframe_breakout_redirect, layout: false
+          else
+            redirect_to @redirect_path
+          end
         else
           # TODO: Handle error case with flash message
           raise "Payment Assert not successful."
@@ -39,12 +47,12 @@ module Spree
       end
 
       def fail
-        raise "PAYMENT FAILED"
         redirect_to order_checkout_path(:delivery)
       end
 
       def cancel
         raise "USER CANCELLED PAYMENT"
+        redirect_to order_checkout_path(:delivery)
       end
 
       private
