@@ -19,7 +19,8 @@ module SolidusSixSaferpay
       payment_page_assert = ActiveMerchant::Billing::Gateways::SixSaferpayPaymentPageGateway.new.assert(token)
 
       if payment_page_assert.success?
-        payment_attributes = extract_payment_attributes(payment_page_assert.params)
+        asserted_payment = SixSaferpay::SixPaymentPage::AssertResponse.new(payment_page_assert.params.deep_symbolize_keys)
+        payment_attributes = extract_payment_attributes(asserted_payment)
 
         @payment = Spree::PaymentCreate.new(order, payment_attributes).build
 
@@ -41,23 +42,25 @@ module SolidusSixSaferpay
     private
 
     def extract_payment_attributes(asserted_payment)
-      transaction = asserted_payment[:Transaction]
-      payment_means = asserted_payment[:PaymentMeans]
-      payer = asserted_payment[:Payer]
-      liability = asserted_payment[:Liability]
-      dcc = asserted_payment[:Dcc]
+      transaction = asserted_payment.transaction
+      payment_means = asserted_payment.payment_means
+      # unused
+      #liability = asserted_payment.liability
+      #payer = asserted_payment.payer
+      #dcc = asserted_payment.dcc
 
       payment_attributes = {
-        amount: normalized_amount(transaction[:Amount][:Value]),
-        response_code: transaction[:Id], 
+        amount: normalized_amount(transaction.amount.value),
+        response_code: transaction.id,
+        # TODO: FIND DYNAMICALLY
         payment_method_id: Spree::PaymentMethod.find_by(type: 'Spree::PaymentMethod::SaferpayPaymentPage').id,
         source_attributes: {
           imported: true, # necessary because we don't want to validate CVV
-          number: payment_means[:DisplayText],
-          month: payment_means[:Card][:ExpMonth],
-          year: payment_means[:Card][:ExpMonth],
-          cc_type: payment_means[:Brand][:PaymentMethod].downcase,
-          name: payment_means[:Card][:HolderName],
+          number: payment_means.display_text,
+          month: payment_means.card.exp_month,
+          year: payment_means.card.exp_year,
+          cc_type: payment_means.brand.payment_method.downcase, # downcase because SIX returns upcased
+          name: payment_means.card.holder_name,
         }
       }
     end

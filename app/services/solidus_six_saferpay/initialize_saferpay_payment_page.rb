@@ -18,8 +18,8 @@ module SolidusSixSaferpay
 
       if payment_page_initialize.success?
         @success = payment_page_initialize.success?
-        @token = payment_page_initialize.params[:Token]
-        @redirect_url = payment_page_initialize.params[:RedirectUrl]
+        @token = payment_page_initialize.params[:token]
+        @redirect_url = payment_page_initialize.params[:redirect_url]
         SaferpayPayment.create!(order: order, token: token)
       end
       self

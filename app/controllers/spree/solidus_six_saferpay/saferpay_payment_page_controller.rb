@@ -46,13 +46,25 @@ module Spree
 
       end
 
+      # TODO: KISS fail + cancel
       def fail
-        redirect_to order_checkout_path(:delivery)
+        require 'pry'; binding.pry
+        @redirect_path = order_checkout_path(:delivery)
+        if payment_method.preferred_as_iframe
+          render :iframe_breakout_redirect, layout: false
+        else
+          redirect_to @redirect_path
+        end
       end
 
+      # TODO: KISS fail + cancel
       def cancel
-        raise "USER CANCELLED PAYMENT"
-        redirect_to order_checkout_path(:delivery)
+        @redirect_path = order_checkout_path(:delivery)
+        if payment_method.preferred_as_iframe
+          render :iframe_breakout_redirect, layout: false
+        else
+          redirect_to @redirect_path
+        end
       end
 
       private

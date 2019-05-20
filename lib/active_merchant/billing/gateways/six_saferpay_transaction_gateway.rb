@@ -59,7 +59,7 @@ module ActiveMerchant
         # @param [Spree::Order] order The order for which the payment is initialized
         # @return [ActiveMerchant::Billing::Response]
         def initialize_payment_page(order)
-          payment_page_initialize = SixSaferpay::PaymentPage::Initialize.new(
+          payment_page_initialize = SixSaferpay::SixPaymentPage::Initialize.new(
             (order.total * 100).to_i,
             order.currency,
             order.number,
@@ -114,7 +114,7 @@ module ActiveMerchant
         end
 
         def assert(token)
-          payment_page_assert = SixSaferpay::PaymentPage::Assert.new(token)
+          payment_page_assert = SixSaferpay::SixPaymentPage::Assert.new(token)
 
           saferpay_response = SixSaferpay::Client.post(payment_page_assert)
 

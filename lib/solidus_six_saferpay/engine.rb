@@ -8,6 +8,7 @@ module SolidusSixSaferpay
 
     initializer "spree.six_payment.payment_methods", :after => "spree.register.payment_methods" do |app|
       app.config.spree.payment_methods << Spree::PaymentMethod::SaferpayPaymentPage
+      app.config.spree.payment_methods << Spree::PaymentMethod::SaferpayTransaction
     end
 
     initializer "solidus_six_payments.assets.precompile" do |app|

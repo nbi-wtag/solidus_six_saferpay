@@ -1,37 +1,6 @@
 require 'activemerchant'
 require 'six_saferpay'
 
-# TODO: PLACEHOLDER UNTIL API IS FINISHED
-class InitializeResponse
-  attr_reader :token, :expiration, :redirect_url
-  def initialize(token:, expiration:, redirect_url:)
-    @token = token
-    @expiration = expiration
-    @redirect_url = redirect_url
-  end
-end
-
-# TODO PLACEHOLDER UNTIL API IS FINISHED
-class AssertResponse
-  attr_reader :transaction, :payment_means, :liability
-
-  def initialize(transaction:, payment_means:, liability:)
-    @transaction = transaction
-    @payment_means = payment_means
-    @liability = liability
-  end
-end
-
-class CaptureResponse
-  attr_reader :capture_id, :status, :date
-
-  def initialize(capture_id:, status:, date:)
-    @capture_id = capture_id
-    @status = status
-    @date = date
-  end
-end
-
 module ActiveMerchant
   module Billing
     module Gateways
@@ -58,8 +27,8 @@ module ActiveMerchant
             config.terminal_id = '17942698'#'17925560'#ENV.fetch('SIX_SAFERPAY_TERMINAL_ID')
             config.username = 'API_246353_14688433'#'API_245294_08700063'#ENV.fetch('SIX_SAFERPAY_USERNAME')
             config.password = 'JsonApiPwd1_H7wv6aDA'#'mei4Xoozle4doi0A'#ENV.fetch('SIX_SAFERPAY_PASSWORD')
-            config.success_url = 'http://localhost:3000/solidus_six_saferpay/payment_page/success'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
-            config.fail_url = 'http://localhost:3000/solidus_six_saferpay/payment_page/fail'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
+            config.success_url = 'http://localhost:3001/solidus_six_saferpay/payment_page/success'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
+            config.fail_url = 'http://localhost:3001/solidus_six_saferpay/payment_page/fail'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
             config.base_url = 'https://test.saferpay.com/api/'#ENV.fetch('SIX_SAFERPAY_BASE_URL')
             config.css_url = ''#ENV.fetch('SIX_SAFERPAY_CSS_URL')
           end
@@ -69,37 +38,21 @@ module ActiveMerchant
         # @param [Spree::Order] order The order for which the payment is initialized
         # @return [ActiveMerchant::Billing::Response]
         def initialize_payment_page(order)
-          payment_page_initialize = SixSaferpay::PaymentPage::Initialize.new(
-            (order.total * 100).to_i,
-            order.currency,
-            order.number,
-            order.number
+
+          payment = SixSaferpay::Payment.new(
+            amount: SixSaferpay::Amount.new(value: (order.total * 100).to_i, currency_code: order.currency),
+            order_id: order.number,
+            description: order.number
           )
 
-          saferpay_response = SixSaferpay::Client.post(payment_page_initialize)
-          # TODO: Let the client handle this
-          response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
 
-          response = InitializeResponse.new(
-            token: response_hash[:Token],
-            expiration: response_hash[:Expiration],
-            redirect_url: response_hash[:RedirectUrl]
-          )
+          payment_page_initialize = SixSaferpay::SixPaymentPage::Initialize.new(payment: payment)
+          saferpay_initialize_response = SixSaferpay::Client.post(payment_page_initialize)
 
-          # TODO: Find out if we need to pass options
           ActiveMerchant::Billing::Response.new(
             true, 
-            "Saferpay Payment Page initialized successfully, token: #{response.token}",
-            response_hash,
-            # {
-            #   test:,
-            #   authorization:,
-            #   fraud_review:,
-            #   error_code:,
-            #   emv_authorization:,
-            #   avs_result:,
-            #   cvv_result:,
-            # }
+            "Saferpay Payment Page initialized successfully, token: #{saferpay_initialize_response.token}",
+            saferpay_initialize_response.to_h.with_indifferent_access,
           )
 
           # TODO: update error handler according to SixSaferpay gem Error classes
@@ -110,45 +63,28 @@ module ActiveMerchant
           ActiveMerchant::Billing::Response.new(
             false, 
             "Saferpay Payment Page could not be initialized",
-            response_hash,
-            # {
-            #   test:,
-            #   authorization:,
-            #   fraud_review:,
-            #   error_code:,
-            #   emv_authorization:,
-            #   avs_result:,
-            #   cvv_result:,
-            # }
+            saferpay_initialize_response.to_h,
           )
         end
 
         def assert(token)
-          payment_page_assert = SixSaferpay::PaymentPage::Assert.new(token)
+          payment_page_assert = SixSaferpay::SixPaymentPage::Assert.new(token: token)
 
-          saferpay_response = SixSaferpay::Client.post(payment_page_assert)
-
-          # TODO: Let the Client handle this
-          response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
-
-          response = AssertResponse.new(
-            transaction: response_hash[:Transaction],
-            payment_means: response_hash[:PaymentMeans],
-            liability: response_hash[:Liability],
-          )
+          saferpay_assert_response = SixSaferpay::Client.post(payment_page_assert)
 
           ActiveMerchant::Billing::Response.new(
             true,
-            "Saferpay Payment Page assert response: #{response}",
-            response_hash
+            "Saferpay Payment Page assert response: #{saferpay_assert_response}",
+            saferpay_assert_response.to_h
           )
         rescue StandardError => e
+          require 'pry'; binding.pry
           SolidusSixSaferpay::ErrorHandler.handle(e, level: :error)
 
           ActiveMerchant::Billing::Response.new(
             false,
             "Saferpay Payment Page assert could not be requested",
-            response_hash
+            saferpay_assert_response.to_h.with_indifferent_access
           )
         end
 
@@ -169,23 +105,15 @@ module ActiveMerchant
 
         # Finalize an authorized payment
         def capture(amount, transaction_id, options={})
-          payment_page_capture = SixSaferpay::Transaction::Capture.new(transaction_id)
+          transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
+          payment_page_capture = SixSaferpay::SixTransaction::Capture.new(transaction_reference: transaction_reference)
 
-          saferpay_response = SixSaferpay::Client.post(payment_page_capture)
-
-          # TODO: Let the Client handle this
-          response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
-
-          response = CaptureResponse.new(
-            capture_id: response_hash[:CaptureId],
-            status: response_hash[:Status],
-            date: response_hash[:Date]
-          )
+          saferpay_capture_response = SixSaferpay::Client.post(payment_page_capture)
 
           ActiveMerchant::Billing::Response.new(
             true,
-            "Saferpay Payment Page capture response: #{response}",
-            response_hash
+            "Saferpay Payment Page capture response: #{saferpay_capture_response}",
+            saferpay_capture_response.to_h.with_indifferent_access
           )
         rescue StandardError => e
           SolidusSixSaferpay::ErrorHandler.handle(e, level: :error)
@@ -193,7 +121,7 @@ module ActiveMerchant
           ActiveMerchant::Billing::Response.new(
             false,
             "Saferpay Payment Page capture failed",
-            response_hash
+            saferpay_capture_response.to_h
           )
         end
 
