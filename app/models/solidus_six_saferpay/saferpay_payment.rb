@@ -1,7 +1,8 @@
 module SolidusSixSaferpay
+
   # TODO: SPEC
   class SaferpayPayment < ApplicationRecord
-    belongs_to :order, class_name: "Spree::Order"
+    belongs_to :order, class_name: "Spree::Order", foreign_key: :spree_order_id
 
     serialize :response_hash, Hash
   end

@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     solidus_six_saferpay (0.1.0)
-      rails (~> 5.2.2)
+      rails (>= 5.1.0)
       six_saferpay
       solidus (>= 2.7.1)
 

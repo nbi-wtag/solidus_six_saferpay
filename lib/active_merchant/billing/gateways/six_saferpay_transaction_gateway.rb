@@ -3,23 +3,41 @@ require 'six_saferpay'
 
 # TODO: PLACEHOLDER UNTIL API IS FINISHED
 class InitializeResponse
-  attr_reader :token, :redirect_url
-  def initialize(token, redirect_url)
+  attr_reader :token, :expiration, :redirect_url
+  def initialize(token:, expiration:, redirect_url:)
     @token = token
+    @expiration = expiration
     @redirect_url = redirect_url
+  end
+end
+
+# TODO PLACEHOLDER UNTIL API IS FINISHED
+class AssertResponse
+  attr_reader
+
+  def initialize(transaction:, payment_means:, liability:)
+    @transaction = transaction
+    @payment_means = payment_means
+    @liability = liability
   end
 end
 
 module ActiveMerchant
   module Billing
     module Gateways
-      class SixSaferpayGateway < Gateway
+      class SixSaferpayTransactionGateway < Gateway
         # * <tt>purchase(money, credit_card, options = {})</tt>
         # * <tt>authorize(money, credit_card, options = {})</tt>
         # * <tt>capture(money, authorization, options = {})</tt>
         # * <tt>void(identification, options = {})</tt>
         # * <tt>refund(money, identification, options = {})</tt>
         # * <tt>verify(credit_card, options = {})</tt>
+
+        # undef .supports? so that it is delegated to the payment method
+        # see https://github.com/solidusio/solidus/blob/master/core/app/models/spree/payment_method/credit_card.rb#L20
+        class << self
+          undef_method :supports?
+        end
 
         attr_reader :saferpay_client
 
@@ -29,13 +47,14 @@ module ActiveMerchant
             config.terminal_id = '17942698'#'17925560'#ENV.fetch('SIX_SAFERPAY_TERMINAL_ID')
             config.username = 'API_246353_14688433'#'API_245294_08700063'#ENV.fetch('SIX_SAFERPAY_USERNAME')
             config.password = 'JsonApiPwd1_H7wv6aDA'#'mei4Xoozle4doi0A'#ENV.fetch('SIX_SAFERPAY_PASSWORD')
-            config.success_url = 'http://localhost:3000/saferpay_payment_page/success'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
-            config.fail_url = 'http://localhost:3000/saferpay_payment_page/fail'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
+            config.success_url = 'http://localhost:3000/solidus_six_saferpay/payment_page/success'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
+            config.fail_url = 'http://localhost:3000/solidus_six_saferpay/payment_page/fail'#ENV.fetch('SIX_SAFERPAY_FAIL_URL')
             config.base_url = 'https://test.saferpay.com/api/'#ENV.fetch('SIX_SAFERPAY_BASE_URL')
             config.css_url = ''#ENV.fetch('SIX_SAFERPAY_CSS_URL')
           end
         end
 
+        # TODO: REMOVE THIS B/C IT IS UNUSED FOR TRANSACTION INTERFACE
         # For the given order, initialize a new PaymentPage
         # @param [Spree::Order] order The order for which the payment is initialized
         # @return [ActiveMerchant::Billing::Response]
@@ -49,8 +68,13 @@ module ActiveMerchant
 
           saferpay_response = SixSaferpay::Client.post(payment_page_initialize)
 
+          # TODO: Let the client handle this
           response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
-          response = InitializeResponse.new(response_hash[:Token], response_hash[:RedirectUrl])
+          response = InitializeResponse.new(
+            token: response_hash[:Token],
+            expiration: response_hash[:Expiration],
+            redirect_url: response_hash[:RedirectUrl]
+          )
 
           # TODO: Find out if we need to pass options
           ActiveMerchant::Billing::Response.new(
@@ -90,11 +114,37 @@ module ActiveMerchant
         end
 
         def assert(token)
-          SolidusSixPayments::AssertSaferpayPaymentPage.call(order)
+          payment_page_assert = SixSaferpay::PaymentPage::Assert.new(token)
+
+          saferpay_response = SixSaferpay::Client.post(payment_page_assert)
+
+          # TODO: Let the Client handle this
+          response_hash = JSON.parse(saferpay_response.body).with_indifferent_access
+
+          response = AssertResponse.new(
+            transaction: response_hash[:Transaction],
+            payment_means: response_hash[:PaymentMeans],
+            liability: response_hash[:Liability],
+          )
+          
+          ActiveMerchant::Billing::Response.new(
+            true,
+            "Saferpay Payment Page assert response: #{response}",
+            response_hash
+          )
+        rescue StandardError => e
+          SolidusSixPayments::ErrorHandler.handle(e, level: error)
+
+          ActiveMerchant::Billing::Response.new(
+            false,
+            "Saferpay Payment Page assert could not be requested",
+            response_hash
+          )
         end
 
         # Defined by solidus to combine authorize + capture
         def purchase(amount, payment_source, options = {})
+          require 'pry'; binding.pry
           auth_response = authorize(amount, payment_source, options)
           if auth_response.success?
             capture(amount, payment_source.order_id, options)
@@ -105,7 +155,8 @@ module ActiveMerchant
 
         # Allocate the reqested amount for a payment
         def authorize(amount, credit_card_payment_source, options = {})
-          raise "#authorize has not been implemented yet for this gateway"
+          # raise "#authorize has not been implemented yet for this gateway"
+          require 'pry'; binding.pry
           # TODO:
           # - post request
           # - parse response
@@ -116,6 +167,7 @@ module ActiveMerchant
 
         # Finalize an authorized payment
         def capture(amount, authorization, options={})
+          require 'pry'; binding.pry
           # TODO:
           # - post request
           # - parse response

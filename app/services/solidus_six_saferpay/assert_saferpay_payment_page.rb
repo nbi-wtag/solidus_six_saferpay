@@ -1,29 +1,34 @@
 module SolidusSixSaferpay
+
   # TODO: SPEC
   class AssertSaferpayPaymentPage
 
-    attr_reader :payment_page, :token, :order, :success
+    attr_reader :saferpay_payment, :token, :order, :success
 
-    def self.call(payment_page)
-      new(payment_page).call
+    def self.call(saferpay_payment)
+      new(saferpay_payment).call
     end
 
-    def initialize(payment_page)
-      @payment_page = payment_page
-      @token = payment_page.token
-      @order = payment_page.order
+    def initialize(saferpay_payment)
+      @saferpay_payment = saferpay_payment
+      @token = saferpay_payment.token
+      @order = saferpay_payment.order
     end
 
     def call
-      payment_page_response = request_payment_page_assert
+      payment_page_assert = ActiveMerchant::Billing::Gateways::SixSaferpayPaymentPageGateway.new.assert(token)
 
-      payment_attributes = extract_payment_attributes(payment_page_response)
+      if payment_page_assert.success?
+        payment_attributes = extract_payment_attributes(payment_page_assert.params)
 
-      payment = Spree::PaymentCreate.new(order, payment_attributes).build
+        payment = Spree::PaymentCreate.new(order, payment_attributes).build
 
-      if payment.save!
-        update_saferpay_payment_id(payment, payment_attributes[:number])
-        @success = true
+        if payment.save!
+          @success = true
+        end
+      else
+        # TODO: CANCEL PAYMENT
+        raise "PaymentPageAssert not successful"
       end
 
       self
@@ -35,19 +40,6 @@ module SolidusSixSaferpay
 
     private
 
-    def request_payment_page_assert
-      payment_page_assert = SixSaferpay::PaymentPage::Assert.new(token)
-
-      saferpay_response = SixSaferpay::Client.post(payment_page_assert)
-
-      # TODO: Let the Client handle this
-      JSON.parse(saferpay_response.body).with_indifferent_access
-    end
-
-    def update_saferpay_payment_id(payment, id)
-      payment.update_attributes(number: id)
-    end
-
     def extract_payment_attributes(asserted_payment)
       transaction = asserted_payment[:Transaction]
       payment_means = asserted_payment[:PaymentMeans]
@@ -57,7 +49,7 @@ module SolidusSixSaferpay
 
       payment_attributes = {
         amount: normalized_amount(transaction[:Amount][:Value]),
-        number: transaction[:Id], # NOTE: this will be overridden, we need to update it after creating the payment
+        response_code: transaction[:Id], 
         payment_method_id: Spree::PaymentMethod.find_by(type: 'Spree::PaymentMethod::SaferpayPaymentPage').id,
         source_attributes: {
           imported: true, # necessary because we don't want to validate CVV

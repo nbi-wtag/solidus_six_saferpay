@@ -1,10 +1,11 @@
 module Spree
+  # TODO: THIS IS WIP, ADD FUNCTIONALITY
   class PaymentMethod::SaferpayTransaction < PaymentMethod::CreditCard
 
-    preference :as_iframe, :boolean, default: false
+    # preference :as_iframe, :boolean, default: false
 
     def gateway_class
-      ActiveMerchant::Billing::Gateways::SixSaferpayGateway
+      ActiveMerchant::Billing::Gateways::SixSaferpayTransactionGateway
     end
 
     # Handled by CreditCard

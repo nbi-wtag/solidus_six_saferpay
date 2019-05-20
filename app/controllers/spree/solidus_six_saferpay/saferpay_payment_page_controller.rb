@@ -5,7 +5,7 @@ module Spree
 
       def init
         load_order
-        payment_page_initialize = InitializeSaferpayPaymentPage.call(@order)
+        payment_page_initialize = ::SolidusSixSaferpay::InitializeSaferpayPaymentPage.call(@order)
 
         if payment_page_initialize.success?
           redirect_url = payment_page_initialize.redirect_url
@@ -21,16 +21,17 @@ module Spree
         # TODO: FIND A BETTER WAY OF FINDING THE CORRESPONDING SAFERPAY TOKEN
         saferpay_payment = ::SolidusSixSaferpay::SaferpayPayment.where(order: @order).order(:created_at).last
 
-        unless checkout
+        unless saferpay_payment
           raise "No Saferpay Token found for order #{@order}"
         end
 
-        payment_page_assert = SolidusSixSaferpay::AssertSaferpayPaymentPage.call(saferpay_payment)
+        payment_page_assert = ::SolidusSixSaferpay::AssertSaferpayPaymentPage.call(saferpay_payment)
+
         if payment_page_assert.success?
           @order.next! if @order.payment?
           redirect_to order_checkout_path(@order.state)
         else
-          # TODO: Handle error case
+          # TODO: Handle error case with flash message
           raise "Payment Assert not successful."
           redirect_to order_checkout_path(@order.state)
         end
