@@ -1,16 +1,16 @@
 module Spree
   module SolidusSixSaferpay
   # TODO: SPEC
-    class SaferpayPaymentPageController < StoreController
+    class SaferpayTransactionController < StoreController
 
       def init
         load_order
         payment_method = PaymentMethod.find(params[:payment_method_id])
 
-        payment_page_initialize = ::SolidusSixSaferpay::InitializeSaferpayPaymentPage.call(@order, payment_method)
+        transaction_initialize = ::SolidusSixSaferpay::InitializeSaferpayTransaction.call(@order, payment_method)
 
-        if payment_page_initialize.success?
-          redirect_url = payment_page_initialize.redirect_url
+        if transaction_initialize.success?
+          redirect_url = transaction_initialize.redirect_url
           render json: { redirect_url: redirect_url }
         else
           render json: { errors: "Payment could not be initialized" }, status: 422

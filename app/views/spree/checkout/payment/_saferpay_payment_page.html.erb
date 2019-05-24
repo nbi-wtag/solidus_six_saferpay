@@ -1,11 +1,11 @@
-<%= javascript_include_tag 'solidus_six_saferpay/saferpay_payment_page' %>
+<% payment_container_id = "saferpay-payment-page-container-#{payment_method.id}" %>
 <% if payment_method.preferred_as_iframe %>
-  <iframe width='100%' height='550px' id="saferpay-payment-container" src="" frameborder="0"></iframe>
+  <iframe width='100%' height='550px' id="<%= payment_container_id %>" src="" frameborder="0"></iframe>
   <script charset="utf-8">
-    SaferpayPaymentPage.loadIframe();
+    SaferpayPaymentMethod.loadIframe("<%= payment_method.id %>", "<%= solidus_six_saferpay_payment_page_init_path %>", "#<%= payment_container_id %>");
   </script>
 <% else %>
   <script charset="utf-8">
-    SaferpayPaymentPage.redirectExternal();
+    SaferpayPaymentMethod.redirectExternal("<%= payment_method.id %>", "<%= solidus_six_saferpay_payment_page_init_path %>");
   </script>
 <% end %>

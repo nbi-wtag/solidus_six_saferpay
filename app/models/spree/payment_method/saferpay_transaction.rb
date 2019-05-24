@@ -6,7 +6,7 @@ module Spree
     end
 
     def payment_source_class
-      Spree::CreditCard
+      Spree::SixSaferpayPayment
     end
 
     def profiles_supported?

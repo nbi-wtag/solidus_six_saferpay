@@ -1,10 +1,20 @@
-module SolidusSixSaferpay
+module Spree
 
   # TODO: SPEC
-  class SaferpayPayment < ApplicationRecord
-    belongs_to :order, class_name: "Spree::Order", foreign_key: :spree_order_id
-
+  #
+  # attributes
+  # * token
+  # * expiration
+  # * redirect_url ?
+  # * capture_id
+  # * response_hash (redundant, serialized)
+  class SixSaferpayPayment < PaymentSource
+    belongs_to :order
+    belongs_to :payment_method
+    # store this anyway for accountability reasons
     serialize :response_hash, Hash
+
+    validates :token, :expiration, presence: true
   end
 end
 

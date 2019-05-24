@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", ">= 5.1.0"
   spec.add_dependency "solidus", ">= 2.7.1"
-  spec.add_dependency "six_saferpay", "~> 0.1.9"
+  spec.add_dependency "six_saferpay"
 
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "rspec-rails"

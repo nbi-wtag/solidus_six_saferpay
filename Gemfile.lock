@@ -3,7 +3,7 @@ PATH
   specs:
     solidus_six_saferpay (0.1.0)
       rails (>= 5.1.0)
-      six_saferpay (~> 0.1.9)
+      six_saferpay
       solidus (>= 2.7.1)
 
 GEM
@@ -35,7 +35,7 @@ GEM
     activejob (5.2.3)
       activesupport (= 5.2.3)
       globalid (>= 0.3.6)
-    activemerchant (1.93.0)
+    activemerchant (1.94.0)
       activesupport (>= 4.2)
       builder (>= 2.1.2, < 4.0.0)
       i18n (>= 0.6.9)
@@ -96,6 +96,7 @@ GEM
       execjs (~> 2.0)
       sprockets (>= 2.0.0)
       tilt (>= 1.2)
+    hashie (3.6.0)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     jbuilder (2.9.1)
@@ -208,8 +209,8 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    six_saferpay (0.1.9)
-      activesupport (>= 5.0.0.0)
+    six_saferpay (0.1.10)
+      activesupport (~> 5.0, >= 5.0.0.0)
     solidus (2.8.3)
       solidus_api (= 2.8.3)
       solidus_backend (= 2.8.3)
@@ -297,6 +298,7 @@ PLATFORMS
 
 DEPENDENCIES
   factory_bot
+  hashie (~> 3.6)
   rspec-rails
   solidus_six_saferpay!
   sqlite3

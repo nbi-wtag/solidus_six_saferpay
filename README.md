@@ -19,6 +19,8 @@ Or install it yourself as:
 $ gem install solidus_six_saferpay
 ```
 
+Make sure to add `*= require solidus_six_saferpay/saferpay_payment_method` to your `application.js` file.
+
 ## Configuration and Usage
 After adding the `solidus_six_saferpay` gem to your Solidus Rails app, you can create new payment methods `Saferpay Payment Page` and `Saferpay Transaction` in the admin backend under "Settings" > "Payment". When adding a new Saferpay payment method, you can configure the payment method with the information you have received from SIX when creating a new test account.
 

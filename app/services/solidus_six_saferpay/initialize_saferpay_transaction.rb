@@ -3,7 +3,7 @@ module SolidusSixSaferpay
 
   # TODO: SPEC
   # TODO: Ensure that we invalidate old payments (they don't get invalidated when already processing)
-  class InitializeSaferpayPaymentPage
+  class InitializeSaferpayTransaction
 
     attr_reader :order, :payment_method, :payment, :redirect_url
 
@@ -17,12 +17,11 @@ module SolidusSixSaferpay
     end
 
     def call
-      initialize_response = ActiveMerchant::Billing::Gateways::SixSaferpayPaymentPageGateway.new.initialize_payment_page(order)
+      initialize_response = ActiveMerchant::Billing::Gateways::SixSaferpayTransactionGateway.new.initialize_transaction(order)
 
       if initialize_response.success?
-
         @payment = Spree::PaymentCreate.new(order, payment_attributes(initialize_response.params)).build
-        @redirect_url = initialize_response.params[:redirect_url]
+        @redirect_url = initialize_response.params[:redirect][:redirect_url]
         @success = @payment.save!
       end
       self
@@ -42,9 +41,10 @@ module SolidusSixSaferpay
           order_id: order.id,
           token: response_params[:token],
           expiration: DateTime.parse(response_params[:expiration]),
-          redirect_url: response_params[:redirect_url],
+          redirect_url: response_params[:redirect][:redirect_url],
         }
       }
     end
+
   end
 end
