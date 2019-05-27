@@ -5,6 +5,7 @@ module ActiveMerchant
 
         def initialize_transaction(order)
           saferpay_response_body = initialize_request(order)
+
           initialize_response = Hashie::Mash.new(saferpay_response_body)
 
           response(

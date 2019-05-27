@@ -24,6 +24,14 @@ var SaferpayPaymentMethod = function() {
     })
   }
 
+  var loadIframeIfCorrectPaymentMethod = function(paymentMethodId, initUrl, containerId) {
+    if (correctPaymentMethodSelected(paymentMethodId)) {
+      getRedirectUrl(paymentMethodId, initUrl, {containerId: containerId}, loadIframe);
+    } else {
+      console.log("incorrect payment method selected for ID: " + paymentMethodId);
+    }
+  }
+
   var loadIframe = function(callbackParams, redirectUrl) {
     containerId = callbackParams.containerId;
     $(containerId).attr('src', redirectUrl);
@@ -48,19 +56,11 @@ var SaferpayPaymentMethod = function() {
 
   return {
     loadIframe: function(paymentMethodId, initUrl, containerId) { 
-      if (correctPaymentMethodSelected(paymentMethodId)) {
-        getRedirectUrl(paymentMethodId, initUrl, {containerId: containerId}, loadIframe);
-      } else {
-        console.log("incorrect payment method selected for ID: " + paymentMethodId);
-      }
+      loadIframeIfCorrectPaymentMethod(paymentMethodId, initUrl, containerId);
 
       // ensure that changing payment method also inits
       $(document).on('change', paymentMethodRadioButtonSelector, function() {
-        if (correctPaymentMethodSelected(paymentMethodId)) {
-          getRedirectUrl(paymentMethodId, initUrl, {containerId: containerId}, loadIframe);
-        } else {
-          console.log("incorrect payment method selected for ID: " + paymentMethodId);
-        }
+        loadIframeIfCorrectPaymentMethod(paymentMethodId, initUrl, containerId)
       });
     },
     redirectExternal: function(paymentMethodId, initUrl) {
