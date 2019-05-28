@@ -1,6 +1,38 @@
-var SaferpayPaymentMethod = function() {
+// var SaferpayPaymentMethod = function(payment_method_json) {
+//   var paymentMethodRadioButtonSelector = 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]'
 
+//   var paymentMethod = JSON.parse(payment_method_json);
+//   var id = paymentMethod.id;
+//   var asIframe = paymentMethod.preferred_as_iframe;
+
+//   var prepareOnSelect = function() {
+//     $(document).off('change', paymentMethodRadioButtonSelector, prepareIfSelected)
+//     $(document).on('change', paymentMethodRadioButtonSelector, prepareIfSelected)
+//   }
+
+//   return {
+//     prepareForPayment: prepareOnSelect;
+//   }
+
+// }
+
+// var Test = function(string) {
+//     this.string = string;
+    
+//     var say = function() {
+//         console.info(string);
+//     }
+    
+//     return {
+//         say : say
+//     }
+// }
+
+
+
+var SaferpayPaymentMethod = function() {
   var paymentMethodRadioButtonSelector = 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]'
+
 
   var getRedirectUrl = function(paymentMethodId, initUrl, callbackParams, callback) {
     $.ajax({
@@ -24,8 +56,9 @@ var SaferpayPaymentMethod = function() {
     })
   }
 
-  var loadIframeIfCorrectPaymentMethod = function(paymentMethodId, initUrl, containerId) {
+  var prepareForIframePaymentMethod = function(paymentMethodId, initUrl, containerId) {
     if (correctPaymentMethodSelected(paymentMethodId)) {
+      // disableSubmitButton();
       getRedirectUrl(paymentMethodId, initUrl, {containerId: containerId}, loadIframe);
     } else {
       console.log("incorrect payment method selected for ID: " + paymentMethodId);
@@ -54,13 +87,17 @@ var SaferpayPaymentMethod = function() {
     return paymentMethodId === selectedPaymentMethodId;
   }
 
+  // var disableSubmitButton = function() {
+
+  // }
+
   return {
     loadIframe: function(paymentMethodId, initUrl, containerId) { 
-      loadIframeIfCorrectPaymentMethod(paymentMethodId, initUrl, containerId);
+      prepareForIframePaymentMethod(paymentMethodId, initUrl, containerId);
 
       // ensure that changing payment method also inits
       $(document).on('change', paymentMethodRadioButtonSelector, function() {
-        loadIframeIfCorrectPaymentMethod(paymentMethodId, initUrl, containerId)
+        prepareForIframePaymentMethod(paymentMethodId, initUrl, containerId)
       });
     },
     redirectExternal: function(paymentMethodId, initUrl) {

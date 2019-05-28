@@ -3,15 +3,18 @@ module ActiveMerchant
     module Gateways
       class SixSaferpayPaymentPageGateway < SixSaferpayGateway
 
-        def initialize_payment_page(order)
+        def initialize_payment_page(order, payment_method)
           amount = Spree::Money.new(order.total, currency: order.currency)
           payment = SixSaferpay::Payment.new(
             amount: SixSaferpay::Amount.new(value: amount.cents, currency_code: amount.currency.iso_code),
             order_id: order.number,
             description: order.number
           )
+          six_payment_methods = payment_method.enabled_payment_methods
+          params = { payment: payment }
+          params.merge!(payment_methods: six_payment_methods) unless six_payment_methods.blank?
 
-          payment_page_initialize = SixSaferpay::SixPaymentPage::Initialize.new(payment: payment)
+          payment_page_initialize = SixSaferpay::SixPaymentPage::Initialize.new(params)
           initialize_response = SixSaferpay::Client.post(payment_page_initialize)
 
           response(
