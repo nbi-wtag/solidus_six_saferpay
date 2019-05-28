@@ -3,15 +3,24 @@ module ActiveMerchant
     module Gateways
       class SixSaferpayTransactionGateway < SixSaferpayGateway
 
-        def initialize_transaction(order)
-          saferpay_response_body = initialize_request(order)
+        def initialize_transaction(order, payment_method)
+          amount = Spree::Money.new(order.total, currency: order.currency)
+          payment = SixSaferpay::Payment.new(
+            amount: SixSaferpay::Amount.new(value: amount.cents, currency_code: amount.currency.iso_code),
+            order_id: order.number,
+            description: order.number
+          )
 
-          initialize_response = Hashie::Mash.new(saferpay_response_body)
+          six_payment_methods = payment_method.enabled_payment_methods
+          params = { payment: payment }
+          params.merge!(payment_methods: six_payment_methods) unless six_payment_methods.blank?
+          transaction_initialize = SixSaferpay::SixTransaction::Initialize.new(params)
+          initialize_response = SixSaferpay::Client.post(transaction_initialize)
 
           response(
             success: true, 
             message: "Saferpay Payment Page initialized successfully, token: #{initialize_response.token}",
-            params: initialize_response.with_indifferent_access,
+            params: initialize_response.to_h.with_indifferent_access,
           )
 
           # TODO: update error handler according to SixSaferpay gem Error classes
@@ -21,8 +30,8 @@ module ActiveMerchant
 
         # Allocate the reqested amount for a payment
         def authorize(amount, payment_source, options = {})
-          saferpay_response_body = authorize_request(payment_source)
-          saferpay_response = Hashie::Mash.new(saferpay_response_body)
+          payment_page_assert = SixSaferpay::SixTransaction::Authorize.new(token: payment_source.token)
+          saferpay_response = SixSaferpay::Client.post(payment_page_assert)
 
           ensure_valid_payment(payment_source, saferpay_response)
 
@@ -30,7 +39,7 @@ module ActiveMerchant
 
           response(
             success: true,
-            message: "Saferpay Payment Page assert response: #{saferpay_response}",
+            message: "Saferpay Transaction authorize response: #{saferpay_response}",
             params: saferpay_response.to_h
           )
         rescue SixSaferpay::Error => e

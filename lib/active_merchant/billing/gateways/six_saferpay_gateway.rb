@@ -101,16 +101,20 @@ module ActiveMerchant
         end
 
         def update_payment_source!(payment_source, saferpay_response)
-          payment_source.update_attributes!(
-            transaction_id: saferpay_response.transaction.id,
-            transaction_status: saferpay_response.transaction.status,
-            transaction_date: DateTime.parse(saferpay_response.transaction.date),
-            six_transaction_reference: saferpay_response.transaction.six_transaction_reference,
-            display_text: saferpay_response.payment_means.display_text,
-            masked_number: saferpay_response.payment_means.card.masked_number,
-            expiration_year: saferpay_response.payment_means.card.exp_year,
-            expiration_month: saferpay_response.payment_means.card.exp_month
-          )
+          attributes = {}
+          attributes[:transaction_id] = saferpay_response.transaction.id
+          attributes[:transaction_status] = saferpay_response.transaction.status
+          attributes[:transaction_date] = DateTime.parse(saferpay_response.transaction.date)
+          attributes[:six_transaction_reference] = saferpay_response.transaction.six_transaction_reference
+          attributes[:display_text] = saferpay_response.payment_means.display_text
+
+          if card = saferpay_response.payment_means.card
+            attributes
+            attributes[:masked_number] = card.masked_number,
+            attributes[:expiration_year] = card.exp_year,
+            attributes[:expiration_month] = card.exp_month
+          end
+          payment_source.update_attributes!(attributes)
         end
 
         def handle_error(error, response)

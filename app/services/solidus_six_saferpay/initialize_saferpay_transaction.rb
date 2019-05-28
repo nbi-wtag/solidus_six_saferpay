@@ -17,7 +17,7 @@ module SolidusSixSaferpay
     end
 
     def call
-      initialize_response = ActiveMerchant::Billing::Gateways::SixSaferpayTransactionGateway.new.initialize_transaction(order)
+      initialize_response = ActiveMerchant::Billing::Gateways::SixSaferpayTransactionGateway.new.initialize_transaction(order, payment_method)
 
       if initialize_response.success?
         @payment = Spree::PaymentCreate.new(order, payment_attributes(initialize_response.params)).build

@@ -10,6 +10,7 @@ module ActiveMerchant
             order_id: order.number,
             description: order.number
           )
+
           six_payment_methods = payment_method.enabled_payment_methods
           params = { payment: payment }
           params.merge!(payment_methods: six_payment_methods) unless six_payment_methods.blank?

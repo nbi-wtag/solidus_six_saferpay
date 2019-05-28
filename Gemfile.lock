@@ -210,7 +210,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    six_saferpay (0.1.10)
+    six_saferpay (1.2.2)
       activesupport (~> 5.0, >= 5.0.0.0)
     solidus (2.8.3)
       solidus_api (= 2.8.3)
