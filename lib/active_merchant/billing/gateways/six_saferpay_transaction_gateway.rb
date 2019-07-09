@@ -3,7 +3,7 @@ module ActiveMerchant
     module Gateways
       class SixSaferpayTransactionGateway < SixSaferpayGateway
 
-        def initialize_transaction(order, payment_method)
+        def initialize_checkout(order, payment_method)
           amount = Spree::Money.new(order.total, currency: order.currency)
           payment = SixSaferpay::Payment.new(
             amount: SixSaferpay::Amount.new(value: amount.cents, currency_code: amount.currency.iso_code),

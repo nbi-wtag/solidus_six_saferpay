@@ -35,6 +35,19 @@ module ActiveMerchant
           end
         end
 
+        def initialize_checkout(order, payment_method)
+          initialize_response = SixSaferpay::Client.post(
+            interface_initialize_object(order, payment_method)
+          )
+          response(
+            success: true,
+            message: "Saferpay Transaction authorize response: #{initialize_response}",
+            params: initialize_response.to_h
+          )
+        rescue SixSaferpay::Error => e
+          handle_error(e, initialize_response)
+        end
+
         def purchase(amount, payment_source, options = {})
           auth_response = authorize(amount, payment_source, options)
           if auth_response.success?
@@ -129,6 +142,64 @@ module ActiveMerchant
 
         def response(success:, message:, params: {}, options: {})
           ActiveMerchant::Billing::Response.new(success, message, params, options)
+        end
+
+        private
+
+        def interface_initialize_object(order, payment_method)
+          raise "Must be implemented in SixSaferpayPaymentPageGateway or SixSaferpayTransactionGateway"
+        end
+
+        def interface_initialize_params(order, payment_method)
+          amount = Spree::Money.new(order.total, currency: order.currency)
+          payment = SixSaferpay::Payment.new(
+            amount: SixSaferpay::Amount.new(value: amount.cents, currency_code: amount.currency.iso_code),
+            order_id: order.number,
+            description: order.number
+          )
+
+          billing_address = order.billing_address
+          billing_address = SixSaferpay::Address.new(
+            first_name: billing_address.first_name,
+            last_name: billing_address.last_name,
+            date_of_birth: nil,
+            company: nil,
+            gender: nil,
+            legal_form: nil,
+            street: billing_address.address1,
+            street_2: nil,
+            zip: billing_address.zipcode,
+            city: billing_address.city,
+            country_subdevision_code: nil,
+            country_code: billing_address.country.iso,
+            phone: nil,
+            email: nil,
+          )
+          shipping_address = order.shipping_address
+          delivery_address = SixSaferpay::Address.new(
+            first_name: shipping_address.first_name,
+            last_name: shipping_address.last_name,
+            date_of_birth: nil,
+            company: nil,
+            gender: nil,
+            legal_form: nil,
+            street: shipping_address.address1,
+            street_2: nil,
+            zip: shipping_address.zipcode,
+            city: shipping_address.city,
+            country_subdevision_code: nil,
+            country_code: shipping_address.country.iso,
+            phone: nil,
+            email: nil,
+          )
+          payer = SixSaferpay::Payer.new(billing_address: billing_address, delivery_address: delivery_address)
+
+          params = { payment: payment, payer: payer }
+
+          six_payment_methods = payment_method.enabled_payment_methods
+          params.merge!(payment_methods: six_payment_methods) unless six_payment_methods.blank?
+
+          params
         end
       end
     end

@@ -15,6 +15,7 @@ class CreateSixSaferpayPayments < ActiveRecord::Migration[5.1]
       t.string :masked_number
       t.string :expiration_year
       t.string :expiration_month
+      t.text :response_hash
 
       t.timestamps
     end

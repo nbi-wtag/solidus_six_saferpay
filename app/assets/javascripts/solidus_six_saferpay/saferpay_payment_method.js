@@ -1,35 +1,3 @@
-// var SaferpayPaymentMethod = function(payment_method_json) {
-//   var paymentMethodRadioButtonSelector = 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]'
-
-//   var paymentMethod = JSON.parse(payment_method_json);
-//   var id = paymentMethod.id;
-//   var asIframe = paymentMethod.preferred_as_iframe;
-
-//   var prepareOnSelect = function() {
-//     $(document).off('change', paymentMethodRadioButtonSelector, prepareIfSelected)
-//     $(document).on('change', paymentMethodRadioButtonSelector, prepareIfSelected)
-//   }
-
-//   return {
-//     prepareForPayment: prepareOnSelect;
-//   }
-
-// }
-
-// var Test = function(string) {
-//     this.string = string;
-    
-//     var say = function() {
-//         console.info(string);
-//     }
-    
-//     return {
-//         say : say
-//     }
-// }
-
-
-
 var SaferpayPaymentMethod = function() {
   var paymentMethodRadioButtonSelector = 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]'
 
@@ -49,8 +17,12 @@ var SaferpayPaymentMethod = function() {
       },
 
       error: function(xhr) {
-        var errors = $.parseJSON(xhr.responseText).errors;
-        console.log(errors);
+        console.log("DANI");
+        debugger;
+        console.log("RADI");
+        // var errors = $.parseJSON(xhr.responseText).errors;
+        // alert(errors);
+        // console.log(errors);
         return false;
       },
     })
@@ -58,7 +30,7 @@ var SaferpayPaymentMethod = function() {
 
   var prepareForIframePaymentMethod = function(paymentMethodId, initUrl, containerId) {
     if (correctPaymentMethodSelected(paymentMethodId)) {
-      // disableSubmitButton();
+      disableFormSubmit();
       getRedirectUrl(paymentMethodId, initUrl, {containerId: containerId}, loadIframe);
     } else {
       console.log("incorrect payment method selected for ID: " + paymentMethodId);
@@ -87,21 +59,36 @@ var SaferpayPaymentMethod = function() {
     return paymentMethodId === selectedPaymentMethodId;
   }
 
-  // var disableSubmitButton = function() {
+  var disableFormSubmit = function() {
+    var form = $("#checkout_form_payment");
+    form.on("submit", function(e) { alert("Submitting this form has been disabled because you are trying to pay with the SIX payment interface.\nIf you see this message, please contact support."); e.stopPropagation(); return false });
+    form.find('input[type="submit"]').toggle(false);
+  }
 
-  // }
+  var enableFormSubmit = function() {
+    var form = $("#checkout_form_payment");
+    form.off("submit");
+    form.find('input[type="submit"]').toggle(true);
+  }
 
   return {
     loadIframe: function(paymentMethodId, initUrl, containerId) { 
-      prepareForIframePaymentMethod(paymentMethodId, initUrl, containerId);
+      $(document).ready(function() {
+        prepareForIframePaymentMethod(paymentMethodId, initUrl, containerId);
+      });
 
       // ensure that changing payment method also inits
+      $(document).off('change', paymentMethodRadioButtonSelector);
       $(document).on('change', paymentMethodRadioButtonSelector, function() {
+        debugger;
+        enableFormSubmit();
         prepareForIframePaymentMethod(paymentMethodId, initUrl, containerId)
       });
     },
     redirectExternal: function(paymentMethodId, initUrl) {
+      $(document).off("submit", "#checkout_form_payment");
       $(document).on("submit", "#checkout_form_payment", function() {
+        debugger;
         getRedirectUrl(paymentMethodId, initUrl, {}, redirectExternal);
       });
     },

@@ -1,0 +1,14 @@
+<% require 'pry'; binding.pry %>
+
+<span class="cc-type">
+  <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
+  <%= source.display_text %>
+
+  <br />
+
+  <%= "#{source.expiration_month}/#{source.expiration_year}" %>
+
+  <br />
+
+  <%= payment.display_amount %>
+</span>
