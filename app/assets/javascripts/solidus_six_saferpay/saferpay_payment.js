@@ -68,8 +68,8 @@ let SaferpayPayment = {
     console.info("PREPARE FOR REDIRECT:");
     console.info(paymentMethod);
     $(document).off('submit', this.paymentFormId);
-    $(document).on('submit', this.paymentFormId, function() {
-      this.getRedirectUrl(paymentMethod.id, paymentMethod.initUrl, {}, this.redirectExternal);
+    $(document).on('submit', this.paymentFormId, function(e) {
+      SaferpayPayment.getRedirectUrl(paymentMethod.id, paymentMethod.initUrl, {}, SaferpayPayment.redirectExternal);
     });
   },
 
