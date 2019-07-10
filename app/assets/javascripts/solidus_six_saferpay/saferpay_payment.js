@@ -13,12 +13,12 @@ let SaferpayPayment = {
       method: 'GET',
       dataType: 'json',
       success: function(data) {
-        console.info(data);
         var redirectUrl = data.redirect_url;
         callback(callbackParams, redirectUrl);
       },
 
       error: function(xhr) {
+        debugger;
         var errors = $.parseJSON(xhr.responseText).errors;
         alert(errors);
         console.info(errors);
@@ -58,15 +58,11 @@ let SaferpayPayment = {
 
 
   prepareForIframePayment: function(paymentMethod) {
-    console.info("PREPARE FOR IFRAME:");
-    console.log(paymentMethod);
     this.disableFormSubmit();
     this.getRedirectUrl(paymentMethod.id, paymentMethod.initUrl, { containerId: paymentMethod.containerId }, this.loadIframe);
   },
 
   prepareForRedirectPayment: function(paymentMethod) {
-    console.info("PREPARE FOR REDIRECT:");
-    console.info(paymentMethod);
     $(document).off('submit', this.paymentFormId);
     $(document).on('submit', this.paymentFormId, function(e) {
       SaferpayPayment.getRedirectUrl(paymentMethod.id, paymentMethod.initUrl, {}, SaferpayPayment.redirectExternal);
@@ -98,15 +94,11 @@ let SaferpayPayment = {
   },
 
   registerIframePaymentMethod: function(paymentMethod) {
-    console.info("registering iframe method:");
-    console.info(paymentMethod);
     paymentMethod.paymentInterface = "iframe";
     this.paymentMethods[paymentMethod.id] = paymentMethod;
   },
 
   registerExternalRedirectPaymentMethod: function(paymentMethod) {
-    console.info("registering external method:");
-    console.info(paymentMethod);
     paymentMethod.paymentInterface = "redirect";
     this.paymentMethods[paymentMethod.id] = paymentMethod;
   },
@@ -117,7 +109,6 @@ $(document).ready(function() {
   if (form.length == 0) {
     return false;
   }
-  console.info("INIT SAFERPAY JS");
   SaferpayPayment.handleSelectedPaymentMethod();
 });
 

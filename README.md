@@ -26,8 +26,26 @@ $ bundle exec rails solidus_six_saferpay:install:migrations
 $ bundle exec rails db:migrate
 ```
 
+Finally, add the following javascript to your `application.js` manifest file:
+
+```javascript
+//= ...
+//= require spree
+//= ...
+//= require solidus_six_saferpay/saferpay_payment
+```
+
 ## Configuration and Usage
 After adding the `solidus_six_saferpay` gem to your Solidus Rails app, you can create new payment methods `Saferpay Payment Page` and `Saferpay Transaction` in the admin backend under "Settings" > "Payment". When adding a new Saferpay payment method, you can configure the payment method with the information you have received from SIX when creating a new test account.
+
+### Payment Page Interface
+When you choose the Payment Page as the payment interface, you can:
+
+* choose if you want to display the payment page in an iFrame directly on the "Payment" checkout page or if you want to redirect to the payment page when the user advances the checkout process
+* choose which payment methods you want to make available for your users. Note that some of these don't seem to work properly. This may depend on your contract with SIX. If you select no specific payment methods, then everything will be available.
+
+### Transaction Interface
+When you choose the Transaction interface, you can 
 
 ## How it works
 

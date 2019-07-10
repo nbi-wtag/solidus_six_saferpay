@@ -10,8 +10,10 @@ module Spree
         ActiveMerchant::Billing::Gateways::SixSaferpayTransactionGateway
       end
 
-      def checkout_interface_class
-        SixSaferpay::SixTransaction::Initialize
+      def payment_source_attributes(initialize_response_params)
+        super.merge(
+          redirect_url: initialize_response_params[:redirect][:redirect_url],
+        )
       end
     end
   end

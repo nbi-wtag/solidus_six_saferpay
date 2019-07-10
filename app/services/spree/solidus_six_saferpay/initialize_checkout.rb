@@ -48,7 +48,6 @@ module Spree
           payment_method: payment_method,
           token: initialize_response_params[:token],
           expiration: DateTime.parse(initialize_response_params[:expiration]),
-          redirect_url: initialize_response_params[:redirect_url],
           response_hash: initialize_response_params
         }
       end
