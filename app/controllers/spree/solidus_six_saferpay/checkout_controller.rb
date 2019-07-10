@@ -18,9 +18,12 @@ module Spree
 
       def success
         load_order
-        @order.next! if @order.payment?
 
+        # TODO: CANCEL PREVIOUS PAYMENTS
+        cancel_previous_payments
         create_payment
+
+        @order.next! if @order.payment?
 
         @redirect_path = order_checkout_path(@order.state)
         render :iframe_breakout_redirect, layout: false
@@ -52,10 +55,14 @@ module Spree
         raise "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
+      # TODO: IMPLEMENT IF NECESSARY
+      def cancel_previous_payments
+        # CancelTransaction.call(@order)
+      end
+
       def create_payment
-        payment = @order.payments.valid.last
-        source = payment.source
-        source.create_payment!
+        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
+        payment_source.create_payment!
       end
 
       def load_order

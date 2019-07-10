@@ -14,7 +14,7 @@ module SolidusSixSaferpay
     end
 
     initializer "solidus_six_payments.assets.precompile" do |app|
-      app.config.assets.precompile += %w( solidus_six_saferpay/saferpay_payment_method.js )
+      app.config.assets.precompile += %w( solidus_six_saferpay/saferpay_payment.js )
     end
   end
 end

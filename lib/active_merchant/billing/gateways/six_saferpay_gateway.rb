@@ -74,6 +74,14 @@ module ActiveMerchant
           handle_error(e, capture_response)
         end
 
+        def void(response_code, source, gateway_options = {})
+          require 'pry'; binding.pry
+        end
+
+        def void(response_code, gateway_options = {})
+          require 'pry'; binding.pry
+        end
+
         private
 
         def ensure_valid_payment(payment_source, saferpay_response)
