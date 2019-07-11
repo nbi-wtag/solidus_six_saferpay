@@ -7,12 +7,12 @@ module Spree
       private
 
       def gateway_class
-        ActiveMerchant::Billing::Gateways::SixSaferpayPaymentPageGateway
+        ::SolidusSixSaferpay::PaymentPageGateway
       end
 
-      def payment_source_attributes(initialize_response_params)
+      def payment_source_attributes(initialize_response)
         super.merge(
-          redirect_url: initialize_response_params[:redirect_url],
+          redirect_url: initialize_response.redirect_url
         )
       end
     end

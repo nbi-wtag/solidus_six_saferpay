@@ -12,18 +12,27 @@ module Spree
           redirect_url = initialized_payment.redirect_url
           render json: { redirect_url: redirect_url }
         else
+          # TODO: I18n
           render json: { errors: "Payment could not be initialized" }, status: 422
         end
       end
 
       def success
         load_order
+        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
-        # TODO: CANCEL PREVIOUS PAYMENTS
-        cancel_previous_payments
-        create_payment
+        if payment_source.nil?
+          # TODO: Proper error handling
+          raise Spree::Core::GatewayError, "No Payment created"
+        end
 
-        @order.next! if @order.payment?
+        # PaymentPage: Assert
+        # Transaction: Authorize
+        handle_successful_payment_initialization(payment_source)
+
+        if payment_create.success?
+          @order.next! if @order.payment?
+        end
 
         @redirect_path = order_checkout_path(@order.state)
         render :iframe_breakout_redirect, layout: false
@@ -51,18 +60,12 @@ module Spree
 
       private
 
-      def initialize_checkout
-        raise "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
+      def initialize_checkout(order, payment_method)
+        raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
-      # TODO: IMPLEMENT IF NECESSARY
-      def cancel_previous_payments
-        # CancelTransaction.call(@order)
-      end
-
-      def create_payment
-        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
-        payment_source.create_payment!
+      def handle_successful_payment_initialization(payment_source)
+        raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
       def load_order
