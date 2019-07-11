@@ -17,7 +17,12 @@ module Spree
     validates :token, :expiration, presence: true
 
     def create_payment!
-      payments.create(order: order, payment_method: payment_method, source: self)
+      payments.create(order: order, payment_method: payment_method, amount: order.total, source: self)
+    end
+
+    # TODO: Store directly
+    def icon_name
+      response_hash[:payment_means][:brand][:payment_method].downcase
     end
   end
 end

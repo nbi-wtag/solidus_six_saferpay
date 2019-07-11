@@ -40,11 +40,19 @@ module SolidusSixSaferpay
       )
       response(
         success: true,
-        message: "Saferpay Transaction authorize response: #{initialize_response}",
+        message: "Saferpay Initialize Checkout response: #{initialize_response}",
         api_response: initialize_response,
       )
     rescue SixSaferpay::Error => e
       handle_error(e, initialize_response)
+    end
+
+    def authorize
+      raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
+    end
+
+    def purchase(amount, payment_source, options = {})
+      capture(amount, payment_source.transaction_id, options)
     end
 
     def capture(amount, transaction_id, options={})
@@ -62,6 +70,7 @@ module SolidusSixSaferpay
     rescue SixSaferpay::Error => e
       handle_error(e, capture_response)
     end
+
 
     private
 
@@ -120,6 +129,16 @@ module SolidusSixSaferpay
 
     def response(success:, message:, api_response:, options: {})
       GatewayResponse.new(success, message, api_response, options)
+    end
+
+    def handle_error(error, response)
+      SolidusSixSaferpay::ErrorHandler.handle(error, level: :error)
+
+      response(
+        success: false,
+        message: error.full_message,
+        api_response: response
+      )
     end
   end
 end

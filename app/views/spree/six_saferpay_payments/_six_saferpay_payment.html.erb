@@ -1,14 +1,8 @@
-<% require 'pry'; binding.pry %>
-
-<span class="cc-type">
-  <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
-  <%= source.display_text %>
-
-  <br />
-
-  <%= "#{source.expiration_month}/#{source.expiration_year}" %>
-
-  <br />
-
+<% payment_source = payment.source %>
+<div class="credit-card">
+  <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{payment_source.icon_name}.png" %></span>
+  <span><%= payment_source.display_text %></span>
+</div>
+<div>
   <%= payment.display_amount %>
-</span>
+</div>

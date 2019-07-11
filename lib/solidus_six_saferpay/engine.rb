@@ -15,6 +15,7 @@ module SolidusSixSaferpay
 
     initializer "solidus_six_payments.assets.precompile" do |app|
       app.config.assets.precompile += %w( solidus_six_saferpay/saferpay_payment.js )
+      app.config.assets.precompile += %w( solidus_six_saferpay/credit_cards/**/*.png )
     end
   end
 end

@@ -28,6 +28,7 @@ module Spree
             # TODO
             raise "INVALID PAYMENT!"
 
+          end
         end
 
         self
@@ -88,4 +89,3 @@ module Spree
     end
   end
 end
-

@@ -30,7 +30,7 @@ Finally, add the following javascript to your `application.js` manifest file:
 
 ```javascript
 //= ...
-//= require spree
+//= require spree <= This must be above the saferpay_payment line
 //= ...
 //= require solidus_six_saferpay/saferpay_payment
 ```
@@ -46,6 +46,38 @@ When you choose the Payment Page as the payment interface, you can:
 
 ### Transaction Interface
 When you choose the Transaction interface, you can 
+
+### Confirm Page
+If you want to display the masked number on the confirm page, you must override the default `_payment.html.erb` partial of spree so that the provided partial can be rendered (instead of just displaying the name of your payment method).
+
+```ruby
+// This is the default "app/views/spree/payments/_payment.html.erb" (including our modification)
+<% source = payment.source %>
+
+// Add this code to render our provided partial that shows the masked number
+<% if source.is_a?(Spree::SixSaferpayPayment) %>
+  <%= render source, payment: payment %>
+<% end %>
+
+// turn this "if" into an "elsif" to prevent rendering the payment method name
+<% elsif source.is_a?(Spree::CreditCard) %>
+  <span class="cc-type">
+    <% unless (cc_type = source.cc_type).blank? %>
+      <%= image_tag "credit_cards/icons/#{cc_type}.png" %>
+    <% end %>
+    <% if source.last_digits %>
+      <%= t('spree.ending_in') %> <%= source.last_digits %>
+    <% end %>
+  </span>
+  <br />
+  <span class="full-name"><%= source.name %></span>
+<% elsif source.is_a?(Spree::StoreCredit) %>
+  <%= content_tag(:span, payment.payment_method.name) %>:
+  <%= content_tag(:span, payment.display_amount) %>
+<% else %>
+  <%= content_tag(:span, payment.payment_method.name) %>
+<% end %>
+```
 
 ## How it works
 

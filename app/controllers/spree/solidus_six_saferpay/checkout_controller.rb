@@ -3,8 +3,9 @@ module Spree
     # TODO: SPEC
     class CheckoutController < StoreController
 
+      before_action :load_order
+
       def init
-        load_order
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_checkout(@order, payment_method)
 
@@ -18,7 +19,6 @@ module Spree
       end
 
       def success
-        load_order
         payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
         if payment_source.nil?
@@ -26,11 +26,14 @@ module Spree
           raise Spree::Core::GatewayError, "No Payment created"
         end
 
-        # PaymentPage: Assert
-        # Transaction: Authorize
-        handle_successful_payment_initialization(payment_source)
+        # NOTE: PaymentPage payments are authorized directly. Instead, we
+        # perform an ASSERT here to gather the necessary details.
+        # This might be confusing at first, but doing it this way makes sense
+        # (and the code a LOT more readable) IMO. Feel free to disagree and PR
+        # a better solution.
+        payment_authorize = authorize_payment(payment_source)
 
-        if payment_create.success?
+        if payment_authorize.success?
           @order.next! if @order.payment?
         end
 
@@ -39,9 +42,11 @@ module Spree
       end
 
       # TODO: KISS fail + cancel
+      # TODO: Find payment_method???
       def fail
+        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
         @redirect_path = order_checkout_path(:delivery)
-        if payment_method.preferred_as_iframe
+        if payment_source.payment_method.preferred_as_iframe
           render :iframe_breakout_redirect, layout: false
         else
           redirect_to @redirect_path
@@ -49,14 +54,15 @@ module Spree
       end
 
       # TODO: KISS fail + cancel
-      def cancel
-        @redirect_path = order_checkout_path(:delivery)
-        if payment_method.preferred_as_iframe
-          render :iframe_breakout_redirect, layout: false
-        else
-          redirect_to @redirect_path
-        end
-      end
+      # TODO: Find payment_method??
+      # def cancel
+      #   @redirect_path = order_checkout_path(:delivery)
+      #   if payment_method.preferred_as_iframe
+      #     render :iframe_breakout_redirect, layout: false
+      #   else
+      #     redirect_to @redirect_path
+      #   end
+      # end
 
       private
 
@@ -64,7 +70,7 @@ module Spree
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
-      def handle_successful_payment_initialization(payment_source)
+      def authorize_payment(payment_source)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
