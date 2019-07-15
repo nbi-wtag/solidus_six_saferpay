@@ -1,0 +1,7 @@
+---
+de:
+  spree:
+    six_saferpay_payments:
+      six_saferpay_payment:
+        pending: Reserviert
+        void: Reservierung annuliert

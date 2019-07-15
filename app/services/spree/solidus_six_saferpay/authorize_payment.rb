@@ -19,7 +19,7 @@ module Spree
           if ensure_valid_payment(payment_source, authorization.api_response)
 
             payment_source.update_attributes!(payment_source_attributes(authorization.api_response))
-            void_and_invalidate_old_solidus_payments
+            invalidate_old_solidus_payments
             create_solidus_payment
             @success = true
           else
@@ -47,9 +47,10 @@ module Spree
         payment.pend!
       end
 
-      def void_and_invalidate_old_solidus_payments
+      def invalidate_old_solidus_payments
         order.payments.valid.each do |payment|
-          puts "INVALIDATE: #{payment.id}"
+          # void or create refund
+          payment.cancel!
         end
       end
 

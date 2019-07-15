@@ -1,8 +1,16 @@
 <% payment_source = payment.source %>
-<div class="credit-card">
-  <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{payment_source.icon_name}.png" %></span>
-  <span><%= payment_source.display_text %></span>
-</div>
-<div>
-  <%= payment.display_amount %>
+<% container_class = "saferpay-payment #{payment.state}" %>
+<div class="<%= container_class %>">
+  <div class="credit-card">
+    <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{payment_source.icon_name}.png" %></span>
+    <span><%= payment_source.display_text %></span>
+  </div>
+  <div>
+    <div class="amount">
+      <%= payment.display_amount %>
+    </div>
+    <div class="state">
+      <%= t(".#{payment.state}") %>
+    </div>
+  </div>
 </div>

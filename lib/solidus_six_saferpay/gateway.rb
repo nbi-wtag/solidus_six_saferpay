@@ -57,14 +57,31 @@ module SolidusSixSaferpay
 
     def capture(amount, transaction_id, options={})
       transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
-      payment_page_capture = SixSaferpay::SixTransaction::Capture.new(transaction_reference: transaction_reference)
+      payment_capture = SixSaferpay::SixTransaction::Capture.new(transaction_reference: transaction_reference)
 
-      capture_response = SixSaferpay::Client.post(payment_page_capture)
+      capture_response = SixSaferpay::Client.post(payment_capture)
 
       response(
         success: true,
-        message: "Saferpay Payment Page capture response: #{capture_response}",
+        message: "Saferpay Payment capture response: #{capture_response}",
         api_response: capture_response,
+      )
+    rescue SixSaferpay::Error => e
+      handle_error(e, capture_response)
+    end
+
+    def try_void(payment)
+      source = payment.source
+      transaction_id = source.transaction_id
+      transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
+      payment_cancel = SixSaferpay::SixTransaction::Cancel.new(transaction_reference: transaction_reference)
+
+      cancel_response = SixSaferpay::Client.post(payment_cancel)
+
+      response(
+        success: true,
+        message: "Saferpay Payment Cancel response: #{cancel_response}",
+        api_response: cancel_response
       )
     rescue SixSaferpay::Error => e
       handle_error(e, capture_response)

@@ -1,0 +1,10 @@
+.saferpay-payment {
+  &.void {
+
+    .amount {
+      text-decoration: line-through;
+    }
+  }
+}
+
+

@@ -1,11 +1,10 @@
 module SolidusSixSaferpay
   class Engine < ::Rails::Engine
     require 'spree/core'
-    require 'hashie'
-    require 'hashie/mash'
 
     isolate_namespace SolidusSixSaferpay
 
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
     config.eager_load_paths += Dir["#{config.root}/lib/**/"]
 
     initializer "spree.six_payment.payment_methods", :after => "spree.register.payment_methods" do |app|

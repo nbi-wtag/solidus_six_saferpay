@@ -2,7 +2,7 @@ module Spree
   class PaymentMethod::SaferpayTransaction < PaymentMethod::SixSaferpayPaymentMethod
 
     def gateway_class
-      SolidusSixSaferpay::TransactionGateway
+      ::SolidusSixSaferpay::TransactionGateway
     end
 
     def partial_name
