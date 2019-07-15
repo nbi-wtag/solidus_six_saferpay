@@ -4,6 +4,8 @@ module SolidusSixSaferpay
     def authorize(amount, payment_source, options = {})
       # TODO: 
       raise "TODO"
+      transaction_authorize = SixSaferpay::SixTransaction::Authorize.new()
+      authorize_response = SixSaferpay::Client.post(transaction_authorize)
     end
 
     private

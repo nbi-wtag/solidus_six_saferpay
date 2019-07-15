@@ -29,6 +29,9 @@ let SaferpayPayment = {
 
   loadIframe: function(callbackParams, redirectUrl) {
     containerId = callbackParams.containerId;
+    $(".saferpay-iframe").not(containerId).addClass("loading-animation");
+    $(".saferpay-iframe").not(containerId).attr("src", "");
+    $(containerId).removeClass('loading-animation');
     $(containerId).attr('src', redirectUrl);
 
     $(window).bind("message", function (e) {

@@ -1,6 +1,7 @@
 <% payment_container_id = "saferpay-payment-page-container-#{payment_method.id}" %>
 <% if payment_method.preferred_as_iframe %>
-  <iframe width='100%' height='550px' id="<%= payment_container_id %>" src="" frameborder="0"></iframe>
+  <iframe class="loading-animation saferpay-iframe" width='100%' height='550px' id="<%= payment_container_id %>" src="" frameborder="0">
+  </iframe>
   <script charset="utf-8">
     SaferpayPayment.registerIframePaymentMethod({id: "<%= payment_method.id %>", initUrl: "<%= solidus_six_saferpay_payment_page_init_path %>", containerId: "#<%= payment_container_id %>"})
   </script>

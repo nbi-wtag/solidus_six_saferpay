@@ -42,7 +42,9 @@ module Spree
       end
 
       def create_solidus_payment
-        payment_source.create_payment!
+        payment = payment_source.create_payment!
+        # The spree payment must reflect that the payment is already authorized!
+        payment.pend!
       end
 
       def void_and_invalidate_old_solidus_payments
