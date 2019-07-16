@@ -14,7 +14,7 @@ module Spree
           render json: { redirect_url: redirect_url }
         else
           # TODO: I18n
-          render json: { errors: "Payment could not be initialized" }, status: 422
+          render json: { errors: t('.checkout_not_initialized') }, status: 422
         end
       end
 
@@ -23,7 +23,7 @@ module Spree
 
         if payment_source.nil?
           # TODO: Proper error handling
-          raise Spree::Core::GatewayError, "No Payment created"
+          raise Spree::Core::GatewayError, t('.payment_source_not_created')
         end
 
         # NOTE: PaymentPage payments are authorized directly. Instead, we
@@ -31,6 +31,10 @@ module Spree
         # This might be confusing at first, but doing it this way makes sense
         # (and the code a LOT more readable) IMO. Feel free to disagree and PR
         # a better solution.
+        # NOTE: Transaction payments are authorized here so that the money is
+        # already allocated when the user is on the confirm page. If the user
+        # then chooses another payment, the authorized payment is voided
+        # (cancelled).
         payment_authorize = authorize_payment(payment_source)
 
         if payment_authorize.success?

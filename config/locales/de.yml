@@ -8,6 +8,10 @@ de:
         void: Reservierung annuliert
     solidus_six_saferpay:
       checkout: &checkout
+        init:
+          checkout_not_initialized: Zahlung konnte nicht gestartet werden.
+        success:
+          payment_source_not_created: Six Saferpay Zahlungsquelle konnte nicht erstellt werden.
         fail:
           payment_failed: Die Zahlung konnte nicht abgeschlossen werden.
       payment_page_checkout:
