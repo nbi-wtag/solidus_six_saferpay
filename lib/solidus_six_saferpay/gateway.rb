@@ -1,5 +1,3 @@
-require 'six_saferpay'
-
 module SolidusSixSaferpay
 
   # TODO: Find out if needed...
@@ -14,11 +12,6 @@ module SolidusSixSaferpay
   end
 
   class Gateway
-    # # undef .supports? so that it is delegated to the payment method
-    # # see https://github.com/solidusio/solidus/blob/master/core/app/models/spree/payment_method/credit_card.rb#L20
-    # class << self
-    #   undef_method :supports?
-    # end
 
     def initialize(options = {})
       # TODO: extract this to initializer
@@ -70,9 +63,32 @@ module SolidusSixSaferpay
       handle_error(e, capture_response)
     end
 
-    def try_void(payment)
-      source = payment.source
-      transaction_id = source.transaction_id
+    def credit(amount, transaction_id, options={})
+      refund(amount, transaction_id, options)
+    end
+
+    def refund(amount, transaction_id, options = {})
+      payment = Spree::Payment.find_by!(response_code: transaction_id)
+      payment_amount = Spree::Money.new(payment.amount, currency: payment.currency)
+
+      amount = SixSaferpay::Amount.new(value: payment_amount.cents, currency_code: payment.currency)
+      refund = SixSaferpay::Refund.new(amount: amount, order_id: payment.order.number)
+      capture_reference = SixSaferpay::CaptureReference.new(capture_id: payment.transaction_id)
+
+      payment_refund = SixSaferpay::SixTransaction::Refund.new( refund: refund, capture_reference: capture_reference)
+
+      refund_response = SixSaferpay::Client.post(payment_refund)
+
+      response(
+        success: true,
+        message: "Saferpay Payment Refund respose: #{refund_response}",
+        api_response: refund_response
+      )
+    rescue SixSaferpay::Error => e
+      handle_error(e, refund_response)
+    end
+
+    def void(amount, transaction_id, options)
       transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
       payment_cancel = SixSaferpay::SixTransaction::Cancel.new(transaction_reference: transaction_reference)
 
@@ -84,7 +100,15 @@ module SolidusSixSaferpay
         api_response: cancel_response
       )
     rescue SixSaferpay::Error => e
-      handle_error(e, capture_response)
+      handle_error(e, cancel_response)
+    end
+
+    def try_void(payment)
+      if payment.checkout? && payment.transaction_id
+        void(payment.amount, payment.transaction_id, originator: self)
+      else
+        raise "Can not void at the moment!"
+      end
     end
 
 

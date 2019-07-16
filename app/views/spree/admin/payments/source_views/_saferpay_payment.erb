@@ -1,0 +1,36 @@
+<% source = payment.source %>
+<% address = source.address %>
+<fieldset data-hook="credit_card">
+  <legend align="center"><%= Spree::CreditCard.model_name.human %></legend>
+
+  <div class="row">
+    <div class="col-4">
+      <dl>
+        <dt><%= t('spree.name_on_card') %>:</dt>
+        <dd><%= source.card.holder_name %></dd>
+
+        <dt><%= Spree::CreditCard.human_attribute_name(:cc_type) %>:</dt>
+        <dd><%= source.brand_name %></dd>
+
+        <dt><%= Spree::CreditCard.human_attribute_name(:number) %>:</dt>
+        <dd><%= source.display_text %></dd>
+
+        <dt><%= Spree::CreditCard.human_attribute_name(:expiration) %>:</dt>
+        <dd><%= source.month %>/<%= source.year %></dd>
+      </dl>
+
+      <div data-hook="address">
+        <%= "#{address.first_name} #{address.last_name}" %><br />
+        <% if address.phone %>
+          <%= address.phone %><br />
+        <% end %>
+        <%= address.address1 %><br />
+        <% if address.address2.present? %>
+          <%= address.address2 %><br />
+        <% end %>
+        <%= "#{address.zipcode} #{address.city}" %><br />
+        <%= address.country %>
+      </div>
+    </div>
+  </div>
+</fieldset>

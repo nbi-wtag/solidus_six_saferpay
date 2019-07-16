@@ -31,5 +31,9 @@ module Spree
     def auto_capture
       true
     end
+
+    def partial_name
+      'saferpay_payment'
+    end
   end
 end

@@ -43,8 +43,6 @@ module Spree
 
       def create_solidus_payment
         payment = payment_source.create_payment!
-        # The spree payment must reflect that the payment is already authorized!
-        payment.pend!
       end
 
       def invalidate_old_solidus_payments

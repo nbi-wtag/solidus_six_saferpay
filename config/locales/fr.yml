@@ -3,5 +3,6 @@ fr:
   spree:
     six_saferpay_payments:
       six_saferpay_payment:
+        checkout: Réservé
         pending: Réservé
         void: Réservation annulée

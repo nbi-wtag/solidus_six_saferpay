@@ -4,9 +4,5 @@ module Spree
     def gateway_class
       ::SolidusSixSaferpay::TransactionGateway
     end
-
-    def partial_name
-      :saferpay_transaction
-    end
   end
 end
