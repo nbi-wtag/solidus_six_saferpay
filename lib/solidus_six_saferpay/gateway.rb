@@ -22,6 +22,7 @@ module SolidusSixSaferpay
         config.password = options.fetch(:password, ENV.fetch('SIX_SAFERPAY_PASSWORD'))
         config.success_url = options.fetch(:success_url, ENV.fetch('SIX_SAFERPAY_SUCCESS_URL'))
         config.fail_url = options.fetch(:fail_url, ENV.fetch('SIX_SAFERPAY_FAIL_URL'))
+        # config.abort_url = options.fetch(:abort_url, ENV.fetch('SIX_SAFERPAY_CANCEL_URL', config.fail_url))
         config.base_url = options.fetch(:base_url, ENV.fetch('SIX_SAFERPAY_BASE_URL'))
         config.css_url = ''
       end
@@ -156,7 +157,8 @@ module SolidusSixSaferpay
         phone: nil,
         email: nil,
       )
-      payer = SixSaferpay::Payer.new(billing_address: billing_address, delivery_address: delivery_address)
+      # TODO: Not sure if i18n is always present. Maybe make this conditional?
+      payer = SixSaferpay::Payer.new(language_code: I18n.locale, billing_address: billing_address, delivery_address: delivery_address)
 
       params = { payment: payment, payer: payer }
 

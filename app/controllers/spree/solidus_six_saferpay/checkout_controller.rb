@@ -41,28 +41,16 @@ module Spree
         render :iframe_breakout_redirect, layout: false
       end
 
-      # TODO: KISS fail + cancel
-      # TODO: Find payment_method???
       def fail
         payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
-        @redirect_path = order_checkout_path(:delivery)
+        @redirect_path = order_checkout_path(:payment)
+        flash[:error] = t('.payment_failed')
         if payment_source.payment_method.preferred_as_iframe
           render :iframe_breakout_redirect, layout: false
         else
           redirect_to @redirect_path
         end
       end
-
-      # TODO: KISS fail + cancel
-      # TODO: Find payment_method??
-      # def cancel
-      #   @redirect_path = order_checkout_path(:delivery)
-      #   if payment_method.preferred_as_iframe
-      #     render :iframe_breakout_redirect, layout: false
-      #   else
-      #     redirect_to @redirect_path
-      #   end
-      # end
 
       private
 

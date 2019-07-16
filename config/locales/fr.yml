@@ -6,3 +6,11 @@ fr:
         checkout: Réservé
         pending: Réservé
         void: Réservation annulée
+    solidus_six_saferpay:
+      checkout: &checkout
+        fail:
+          payment_failed: Le paiement n'a pas pu être complété.
+      payment_page_checkout:
+        <<: *checkout
+      transaction_checkout:
+        <<: *checkout
