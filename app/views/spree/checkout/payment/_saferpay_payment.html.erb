@@ -1,0 +1,12 @@
+<% payment_container_id = "saferpay-payment-container-#{payment_method.id}" %>
+<% if payment_method.preferred_as_iframe %>
+  <iframe class="loading-animation saferpay-iframe" width='100%' height='550px' id="<%= payment_container_id %>" src="" frameborder="0">
+  </iframe>
+  <script charset="utf-8">
+    SaferpayPayment.registerIframePaymentMethod({id: "<%= payment_method.id %>", initUrl: "<%= payment_method.init_path %>", containerId: "#<%= payment_container_id %>"})
+  </script>
+<% else %>
+  <script charset="utf-8">
+    SaferpayPayment.registerExternalRedirectPaymentMethod({id: "<%= payment_method.id %>", initUrl: "<%= payment_method.init_path %>"})
+  </script>
+<% end %>

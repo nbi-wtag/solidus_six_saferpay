@@ -1,6 +1,9 @@
 module Spree
   class PaymentMethod::SixSaferpayPaymentMethod < PaymentMethod::CreditCard
 
+    # used for configuring the init path
+    include Spree::Core::Engine.routes.url_helpers
+
     AVAILABLE_PAYMENT_METHODS = %w(ALIPAY AMEX BANCONTACT BONUS DINERS DIRECTDEBIT EPRZELEWY EPS GIROPAY IDEAL INVOICE JCB MAESTRO MASTERCARD MYONE PAYPAL PAYDIREKT POSTCARD POSTFINANCE SAFERPAYTEST SOFORT TWINT UNIONPAY VISA VPAY)
 
     delegate :try_void, to: :gateway
@@ -34,6 +37,10 @@ module Spree
 
     def partial_name
       'saferpay_payment'
+    end
+
+    def init_path
+      raise NotImplementedError, "Must be implemented in SaferpayPaymentPage or SaferpayTransaction"
     end
   end
 end
