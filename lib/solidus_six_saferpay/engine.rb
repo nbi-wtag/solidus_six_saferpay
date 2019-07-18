@@ -17,5 +17,9 @@ module SolidusSixSaferpay
       app.config.assets.precompile += %w( solidus_six_saferpay/saferpay_payment.js )
       app.config.assets.precompile += %w( solidus_six_saferpay/credit_cards/**/*.png )
     end
+
+    config.generators do |g|
+      g.test_framework :rspec
+    end
   end
 end
