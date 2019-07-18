@@ -13,6 +13,8 @@ module SolidusSixSaferpay
 
   class Gateway
 
+    include Spree::RouteAccess
+
     def initialize(options = {})
       # TODO: extract this to initializer
       SixSaferpay.configure do |config|
@@ -20,9 +22,8 @@ module SolidusSixSaferpay
         config.terminal_id = options.fetch(:terminal_id, ENV.fetch('SIX_SAFERPAY_TERMINAL_ID'))
         config.username = options.fetch(:username, ENV.fetch('SIX_SAFERPAY_USERNAME'))
         config.password = options.fetch(:password, ENV.fetch('SIX_SAFERPAY_PASSWORD'))
-        config.success_url = options.fetch(:success_url, ENV.fetch('SIX_SAFERPAY_SUCCESS_URL'))
-        config.fail_url = options.fetch(:fail_url, ENV.fetch('SIX_SAFERPAY_FAIL_URL'))
-        # config.abort_url = options.fetch(:abort_url, ENV.fetch('SIX_SAFERPAY_CANCEL_URL', config.fail_url))
+        config.success_url = options.fetch(:success_url)
+        config.fail_url = options.fetch(:fail_url)
         config.base_url = options.fetch(:base_url, ENV.fetch('SIX_SAFERPAY_BASE_URL'))
         config.css_url = ''
       end
@@ -33,15 +34,20 @@ module SolidusSixSaferpay
         interface_initialize_object(order, payment_method)
       )
       response(
-        success: true,
-        message: "Saferpay Initialize Checkout response: #{initialize_response}",
-        api_response: initialize_response,
+        true,
+        "Saferpay Initialize Checkout response: #{initialize_response.to_h}",
+        initialize_response,
       )
     rescue SixSaferpay::Error => e
       handle_error(e, initialize_response)
     end
 
-    def authorize
+    # TODO: fix signarure
+    def inquire()
+      raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
+    end
+
+    def authorize(amount, payment_source, options = {})
       raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
     end
 
@@ -50,15 +56,17 @@ module SolidusSixSaferpay
     end
 
     def capture(amount, transaction_id, options={})
+
       transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
       payment_capture = SixSaferpay::SixTransaction::Capture.new(transaction_reference: transaction_reference)
 
       capture_response = SixSaferpay::Client.post(payment_capture)
 
       response(
-        success: true,
-        message: "Saferpay Payment capture response: #{capture_response}",
-        api_response: capture_response,
+        true,
+        "Saferpay Payment Capture response: #{capture_response.to_h}",
+        capture_response,
+        { authorization: capture_response.capture_id }
       )
     rescue SixSaferpay::Error => e
       handle_error(e, capture_response)
@@ -80,25 +88,23 @@ module SolidusSixSaferpay
 
       refund_response = SixSaferpay::Client.post(payment_refund)
 
-      response(
-        success: true,
-        message: "Saferpay Payment Refund respose: #{refund_response}",
-        api_response: refund_response
-      )
+      # actually capture the refund
+      capture(payment.amount, refund_response.transaction.id, options)
+
     rescue SixSaferpay::Error => e
       handle_error(e, refund_response)
     end
 
-    def void(amount, transaction_id, options)
+    def void(transaction_id, options)
       transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
       payment_cancel = SixSaferpay::SixTransaction::Cancel.new(transaction_reference: transaction_reference)
 
       cancel_response = SixSaferpay::Client.post(payment_cancel)
 
       response(
-        success: true,
-        message: "Saferpay Payment Cancel response: #{cancel_response}",
-        api_response: cancel_response
+        true,
+        "Saferpay Payment Cancel response: #{cancel_response.to_h}",
+        cancel_response
       )
     rescue SixSaferpay::Error => e
       handle_error(e, cancel_response)
@@ -106,9 +112,7 @@ module SolidusSixSaferpay
 
     def try_void(payment)
       if payment.checkout? && payment.transaction_id
-        void(payment.amount, payment.transaction_id, originator: self)
-      else
-        raise "Can not void at the moment!"
+        void(payment.transaction_id, originator: self)
       end
     end
 
@@ -168,22 +172,19 @@ module SolidusSixSaferpay
       params
     end
 
-    def response(success:, message:, api_response:, options: {})
+    def response(success, message, api_response, options = {})
       GatewayResponse.new(success, message, api_response, options)
     end
 
     def handle_error(error, response)
-      # TODO: REMOVE THIS FOR PRODUCTION!!!!!
-      if Rails.env.development?
-        raise error, response
-      end
-
+      # Call host error handler hook
       SolidusSixSaferpay::ErrorHandler.handle(error, level: :error)
 
       response(
-        success: false,
-        message: error.full_message,
-        api_response: response
+        false,
+        error.error_message,
+        response,
+        error_name: error.error_name
       )
     end
   end

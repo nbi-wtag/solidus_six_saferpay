@@ -18,3 +18,5 @@ de:
         <<: *checkout
       transaction_checkout:
         <<: *checkout
+  six_saferpay:
+    error_names:

@@ -17,7 +17,7 @@ module Spree
       end
 
       def call
-        checkout_initialize = gateway_class.new.initialize_checkout(order, payment_method)
+        checkout_initialize = gateway.initialize_checkout(order, payment_method)
 
         if checkout_initialize.success?
           payment_source = build_payment_source(checkout_initialize.api_response)
@@ -38,8 +38,8 @@ module Spree
 
       private
 
-      def gateway_class
-        raise NotImplementedError, "Must be implemented in InitializePaymentPage or InitializeTransaction"
+      def gateway
+        raise NotImplementedError, "Must be implemented in InitializePaymentPage or InitializeTransaction by including UsePaymentPageGateway or UseTransactionGateway"
       end
 
       def payment_source_attributes(initialize_response)

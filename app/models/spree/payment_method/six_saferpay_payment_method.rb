@@ -1,14 +1,15 @@
 module Spree
   class PaymentMethod::SixSaferpayPaymentMethod < PaymentMethod::CreditCard
 
-    # used for configuring the init path
-    include Spree::Core::Engine.routes.url_helpers
+    include RouteAccess
 
     AVAILABLE_PAYMENT_METHODS = %w(ALIPAY AMEX BANCONTACT BONUS DINERS DIRECTDEBIT EPRZELEWY EPS GIROPAY IDEAL INVOICE JCB MAESTRO MASTERCARD MYONE PAYPAL PAYDIREKT POSTCARD POSTFINANCE SAFERPAYTEST SOFORT TWINT UNIONPAY VISA VPAY)
 
     delegate :try_void, to: :gateway
 
     preference :as_iframe, :boolean, default: false
+
+    preference :liability_shift_required, :boolean, default: true
 
     # Configure all available Payment Methods for the Saferpay API as
     # preferences

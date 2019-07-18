@@ -59,18 +59,5 @@ module Spree
     def icon_name
       payment_means.brand.payment_method.downcase
     end
-
-    # --- BELOW: PaymentMethod::Creditcard Behaviour
-    # alias_method :cc_type, :icon_name
-    # def last_digits
-    #   masked_number[-5, -1]
-    # end
-    # def gateway_customer_profile_id
-    #   nil
-    # end
-
-    # def gateway_payment_profile_id
-    #   transaction_id
-    # end
   end
 end

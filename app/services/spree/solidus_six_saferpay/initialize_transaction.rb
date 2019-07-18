@@ -3,12 +3,9 @@ module Spree
 
     # TODO: SPEC
     class InitializeTransaction < InitializeCheckout
+      include UseTransactionGateway
 
       private
-
-      def gateway_class
-        ::SolidusSixSaferpay::TransactionGateway
-      end
 
       def payment_source_attributes(initialize_response)
         super.merge(

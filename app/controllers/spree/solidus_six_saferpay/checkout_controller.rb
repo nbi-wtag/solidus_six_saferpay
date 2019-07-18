@@ -39,6 +39,8 @@ module Spree
 
         if payment_authorize.success?
           @order.next! if @order.payment?
+        else
+          flash[:error] = payment_authorize.user_message
         end
 
         @redirect_path = order_checkout_path(@order.state)
@@ -46,9 +48,13 @@ module Spree
       end
 
       def fail
+
         payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
+
+        payment_inquiry = inquire_payment(payment_source)
+
         @redirect_path = order_checkout_path(:payment)
-        flash[:error] = t('.payment_failed')
+        flash[:error] = payment_inquiry.user_message
         if payment_source.payment_method.preferred_as_iframe
           render :iframe_breakout_redirect, layout: false
         else
@@ -63,6 +69,10 @@ module Spree
       end
 
       def authorize_payment(payment_source)
+        raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
+      end
+
+      def inquire_payment(payment_source)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 

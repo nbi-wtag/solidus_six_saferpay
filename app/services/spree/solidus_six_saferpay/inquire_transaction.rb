@@ -1,13 +1,8 @@
 module Spree
   module SolidusSixSaferpay
     # TODO: SPEC
-    class InquireTransaction < RequestPaymentInformation
-
-      def call
-
-      end
-
+    class InquireTransaction
+      include UseTransactionGateway
     end
   end
 end
-

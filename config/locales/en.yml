@@ -18,3 +18,34 @@ en:
         <<: *checkout
       transaction_checkout:
         <<: *checkout
+  six_saferpay:
+    error_names:
+      ACTION_NOT_SUPPORTED:	The requested action is not supported in the given context or the action can't be executed with the request data.
+      ALIAS_INVALID:	The alias is not known or already used (in case of registration).
+      AMOUNT_INVALID:	The amount does not adhere to the restrictions for this action.
+      AUTHENTICATION_FAILED:	Wrong password, wrong client certificate, invalid token, wrong HMAC.
+      BLOCKED_BY_RISK_MANAGEMENT:	Action blocked by risk management.
+      CARD_CHECK_FAILED:	Invalid card number or cvc.
+      CARD_CVC_INVALID:	Wrong cvc entered.
+      CARD_CVC_REQUIRED:	Cvc not entered but required.
+      CARD_EXPIRED:	Card expired.
+      COMMUNICATION_FAILED:	The communication to the processor failed.
+      COMMUNICATION_TIMEOUT:	Saferpay did not receive a response from the external system in time. It’s possible that an authorization was created, but Saferpay is not able to know this.
+      CONDITION_NOT_SATISFIED:	The condition which was defined in the request could not be satisfied.
+      CURRENCY_INVALID:	Currency does not match referenced transaction currency.
+      GENERAL_DECLINED:	Transaction declined by unknown reason.
+      INTERNAL_ERROR:	Internal error in Saferpay.
+      NO_CONTRACT:	No contract available for the brand / currency combination.
+      NO_CREDITS_AVAILABLE:	No more credits available for this account.
+      PAYMENTMEANS_INVALID:	Invalid means of payment (e.g. invalid card).
+      PERMISSION_DENIED:	No permission (e.g. terminal does not belong to the customer).
+      3DS_AUTHENTICATION_FAILED:	3D-secure authentication failed – the transaction must be aborted.
+      TOKEN_EXPIRED:	The token is expired.
+      TOKEN_INVALID:	The token either does not exist for this customer or was already used.
+      TRANSACTION_ABORTED:	The transaction was aborted by the payer.
+      TRANSACTION_ALREADY_CAPTURED:	Transaction already captured.
+      TRANSACTION_DECLINED:	Declined by the processor.
+      TRANSACTION_IN_WRONG_STATE:	Transaction is in the wrong state.
+      TRANSACTION_NOT_FOUND:	Transaction could not be found.
+      TRANSACTION_NOT_STARTED:	The transaction was not started by the payer. Therefore, no final result for the transaction is available.
+      VALIDATION_FAILED:	Validation failed.
