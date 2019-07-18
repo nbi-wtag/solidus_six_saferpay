@@ -30,16 +30,16 @@ module SolidusSixSaferpay
       handle_error(e, initialize_response)
     end
 
-    def inquire(payment_source, options = {})
+    def inquire(saferpay_payment, options = {})
       raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
     end
 
-    def authorize(amount, payment_source, options = {})
+    def authorize(amount, saferpay_payment, options = {})
       raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
     end
 
-    def purchase(amount, payment_source, options = {})
-      capture(amount, payment_source.transaction_id, options)
+    def purchase(amount, saferpay_payment, options = {})
+      capture(amount, saferpay_payment.transaction_id, options)
     end
 
     def capture(amount, transaction_id, options={})

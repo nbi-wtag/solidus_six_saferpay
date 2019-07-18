@@ -10,8 +10,8 @@ module SolidusSixSaferpay
       )
     end
 
-    def inquire(payment_source, options = {})
-      inquire_response = perform_assert_request(payment_source, options)
+    def inquire(saferpay_payment, options = {})
+      inquire_response = perform_assert_request(saferpay_payment, options)
 
       response(
         true,
@@ -22,12 +22,12 @@ module SolidusSixSaferpay
       handle_error(e, inquire_response)
     end
 
-    def authorize(_amount, payment_source, options = {})
-      assert(payment_source, options)
+    def authorize(_amount, saferpay_payment, options = {})
+      assert(saferpay_payment, options)
     end
 
-    def assert(payment_source, options = {})
-      assert_response = perform_assert_request(payment_source, options)
+    def assert(saferpay_payment, options = {})
+      assert_response = perform_assert_request(saferpay_payment, options)
 
       response(
         true,
@@ -41,8 +41,8 @@ module SolidusSixSaferpay
 
     private
 
-    def perform_assert_request(payment_source, options = {})
-      payment_page_assert = SixSaferpay::SixPaymentPage::Assert.new(token: payment_source.token)
+    def perform_assert_request(saferpay_payment, options = {})
+      payment_page_assert = SixSaferpay::SixPaymentPage::Assert.new(token: saferpay_payment.token)
       SixSaferpay::Client.post(payment_page_assert)
     end
 

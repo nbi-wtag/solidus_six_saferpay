@@ -11,8 +11,8 @@ module SolidusSixSaferpay
     end
 
     # TODO
-    def inquire(payment_source, options = {})
-      transaction_inquire = SixSaferpay::SixTransaction::Inquire.new(transaction_reference: payment_source.transaction_id)
+    def inquire(saferpay_payment, options = {})
+      transaction_inquire = SixSaferpay::SixTransaction::Inquire.new(transaction_reference: saferpay_payment.transaction_id)
       inquire_response = SixSaferpay::Client.post(transaction_inquire)
 
       respose(
@@ -24,8 +24,8 @@ module SolidusSixSaferpay
       handle_error(e, inquire_response)
     end
 
-    def authorize(amount, payment_source, options = {})
-      transaction_authorize = SixSaferpay::SixTransaction::Authorize.new(token: payment_source.token)
+    def authorize(amount, saferpay_payment, options = {})
+      transaction_authorize = SixSaferpay::SixTransaction::Authorize.new(token: saferpay_payment.token)
       authorize_response = SixSaferpay::Client.post(transaction_authorize)
 
       response(

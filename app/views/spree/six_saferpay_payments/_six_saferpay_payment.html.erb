@@ -1,9 +1,9 @@
-<% payment_source = payment.source %>
+<% saferpay_payment = payment.source %>
 <% container_class = "saferpay-payment #{payment.state}" %>
 <div class="<%= container_class %>">
   <div class="credit-card">
-    <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{payment_source.icon_name}.png" %></span>
-    <span><%= payment_source.display_text %></span>
+    <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{saferpay_payment.icon_name}.png" %></span>
+    <span><%= saferpay_payment.display_text %></span>
   </div>
   <div>
     <div class="amount">

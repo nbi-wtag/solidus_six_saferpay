@@ -7,7 +7,7 @@ module Spree
 
       private
 
-      def payment_source_attributes(initialize_response)
+      def saferpay_payment_attributes(initialize_response)
         super.merge(
           redirect_url: initialize_response.redirect.redirect_url
         )

@@ -20,16 +20,16 @@ module Spree
         checkout_initialize = gateway.initialize_checkout(order, payment_method)
 
         if checkout_initialize.success?
-          payment_source = build_payment_source(checkout_initialize.api_response)
-          @redirect_url = payment_source.redirect_url
-          @success = payment_source.save!
+          saferpay_payment = build_saferpay_payment(checkout_initialize.api_response)
+          @redirect_url = saferpay_payment.redirect_url
+          @success = saferpay_payment.save!
         end
 
         self
       end
 
-      def build_payment_source(initialize_response)
-        Spree::SixSaferpayPayment.new(payment_source_attributes(initialize_response))
+      def build_saferpay_payment(initialize_response)
+        Spree::SixSaferpayPayment.new(saferpay_payment_attributes(initialize_response))
       end
 
       def success?
@@ -42,7 +42,7 @@ module Spree
         raise NotImplementedError, "Must be implemented in InitializePaymentPage or InitializeTransaction by including UsePaymentPageGateway or UseTransactionGateway"
       end
 
-      def payment_source_attributes(initialize_response)
+      def saferpay_payment_attributes(initialize_response)
         {
           order: order,
           payment_method: payment_method,

@@ -2,22 +2,22 @@ module Spree
   module SolidusSixSaferpay
     # TODO: SPEC
     class AuthorizePayment
-      attr_reader :payment_source, :order, :success, :user_message
+      attr_reader :saferpay_payment, :order, :success, :user_message
 
-      def self.call(payment_source)
-        new(payment_source).call
+      def self.call(saferpay_payment)
+        new(saferpay_payment).call
       end
 
-      def initialize(payment_source)
-        @payment_source = payment_source
-        @order = payment_source.order
+      def initialize(saferpay_payment)
+        @saferpay_payment = saferpay_payment
+        @order = saferpay_payment.order
       end
 
       def call
-        authorization = gateway.authorize(order.total, payment_source)
+        authorization = gateway.authorize(order.total, saferpay_payment)
 
         if authorization.success?
-          payment_source.update_attributes!(payment_source_attributes(authorization.api_response))
+          saferpay_payment.update_attributes!(saferpay_payment_attributes(authorization.api_response))
           @success = true
         end
         self
@@ -33,7 +33,7 @@ module Spree
         raise NotImplementedError, "Must be implemented in AssertPaymentPage or AuthorizeTransaction with UsePaymentPageGateway or UseTransactionGateway"
       end
 
-      def payment_source_attributes(saferpay_response)
+      def saferpay_payment_attributes(saferpay_response)
         payment_means = saferpay_response.payment_means
         brand = payment_means.brand
         card = payment_means.card

@@ -10,16 +10,16 @@ module Spree
         InitializePaymentPage.call(order, payment_method)
       end
 
-      def authorize_payment(payment_source)
-        AssertPaymentPage.call(payment_source)
+      def authorize_payment(saferpay_payment)
+        AssertPaymentPage.call(saferpay_payment)
       end
 
-      def process_authorization(payment_source)
-        ProcessPaymentPagePayment.call(payment_source)
+      def process_authorization(saferpay_payment)
+        ProcessPaymentPagePayment.call(saferpay_payment)
       end
 
-      def inquire_payment(payment_source)
-        InquirePaymentPage.call(payment_source)
+      def inquire_payment(saferpay_payment)
+        InquirePaymentPage.call(saferpay_payment)
       end
     end
   end
