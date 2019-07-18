@@ -14,6 +14,10 @@ module Spree
         AssertPaymentPage.call(payment_source)
       end
 
+      def process_authorization(payment_source)
+        ProcessPaymentPagePayment.call(payment_source)
+      end
+
       def inquire_payment(payment_source)
         InquirePaymentPage.call(payment_source)
       end

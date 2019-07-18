@@ -37,8 +37,6 @@ module SolidusSixSaferpay
     rescue SixSaferpay::Error => e
       # TODO: MAYBE BETTER HANDLING FOR FAILED TRANSACTIONS?
       handle_error(e, assert_response)
-    rescue InvalidSaferpayPayment => e
-      handle_error(e, assert_response)
     end
 
     private

@@ -2,7 +2,7 @@ module Spree
   module SolidusSixSaferpay
 
     # TODO: SPEC
-    class InitializePaymentPage < InitializeCheckout
+    class InitializePaymentPage < InitializePayment
       include UsePaymentPageGateway
 
       private

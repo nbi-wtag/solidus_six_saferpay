@@ -3,7 +3,7 @@ module Spree
 
     # TODO: SPEC
     # TODO: Ensure that we invalidate old payments (they don't get invalidated when already processing)
-    class InitializeCheckout
+    class InitializePayment
 
       attr_reader :order, :payment_method, :redirect_url
 

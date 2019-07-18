@@ -14,6 +14,10 @@ module Spree
         AuthorizeTransaction.call(payment_source)
       end
 
+      def process_authorization(payment_source)
+        ProcessTransactionPayment.call(payment_source)
+      end
+
       def inquire_payment(payment_source)
         InquireTransaction.call(payment_source)
       end

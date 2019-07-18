@@ -23,8 +23,8 @@ module Spree
 
     validates :token, :expiration, presence: true
 
-    def create_payment!
-      payments.create(order: order, response_code: transaction_id, payment_method: payment_method, amount: order.total, source: self)
+    def create_solidus_payment!
+      payments.create!(order: order, response_code: transaction_id, payment_method: payment_method, amount: order.total, source: self)
     end
 
     def address
@@ -33,6 +33,14 @@ module Spree
 
     def payment_means
       @payment_means ||= ::SixSaferpay::ResponsePaymentMeans.new(response_hash[:payment_means])
+    end
+
+    def transaction
+      @transaction ||= ::SixSaferpay::Transaction.new(response_hash[:transaction])
+    end
+
+    def liability
+      @liability ||= ::SixSaferpay::Liability.new(response_hash[:liability])
     end
 
     def card
@@ -55,7 +63,6 @@ module Spree
       card.exp_year
     end
 
-    # TODO: Store directly
     def icon_name
       payment_means.brand.payment_method.downcase
     end

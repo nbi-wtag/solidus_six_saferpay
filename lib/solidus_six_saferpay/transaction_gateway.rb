@@ -35,8 +35,6 @@ module SolidusSixSaferpay
       )
     rescue SixSaferpay::Error => e
       handle_error(e, authorize_response)
-    rescue InvalidSaferpayPayment => e
-      handle_error(e, authorize_response)
     end
 
     private

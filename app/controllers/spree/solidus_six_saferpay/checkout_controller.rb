@@ -19,9 +19,9 @@ module Spree
       end
 
       def success
-        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
+        saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
-        if payment_source.nil?
+        if saferpay_payment.nil?
           # TODO: Proper error handling
           raise Spree::Core::GatewayError, t('.payment_source_not_created')
         end
@@ -35,12 +35,20 @@ module Spree
         # already allocated when the user is on the confirm page. If the user
         # then chooses another payment, the authorized payment is voided
         # (cancelled).
-        payment_authorize = authorize_payment(payment_source)
+        payment_authorization = authorize_payment(saferpay_payment)
 
-        if payment_authorize.success?
-          @order.next! if @order.payment?
+        # TODO: CLEANUP
+        if payment_authorization.success?
+          processed_authorization = process_authorization(saferpay_payment)
+
+          if processed_authorization.success?
+            @order.next! if @order.payment?
+          else
+            flash[:error] = processed_authorization.user_message
+          end
         else
-          flash[:error] = payment_authorize.user_message
+          payment_inquiry = inquire_payment(saferpay_payment)
+          flash[:error] = payment_inquiry.user_message
         end
 
         @redirect_path = order_checkout_path(@order.state)
@@ -48,14 +56,13 @@ module Spree
       end
 
       def fail
+        saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
-        payment_source = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
-
-        payment_inquiry = inquire_payment(payment_source)
+        payment_inquiry = inquire_payment(saferpay_payment)
 
         @redirect_path = order_checkout_path(:payment)
         flash[:error] = payment_inquiry.user_message
-        if payment_source.payment_method.preferred_as_iframe
+        if saferpay_payment.payment_method.preferred_as_iframe
           render :iframe_breakout_redirect, layout: false
         else
           redirect_to @redirect_path
@@ -68,11 +75,16 @@ module Spree
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
-      def authorize_payment(payment_source)
+      def authorize_payment(saferpay_payment)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 
-      def inquire_payment(payment_source)
+      def process_authorization(saferpay_payment)
+        raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
+        ProcessAuthorizedPayment.call(saferpay_payment)
+      end
+
+      def inquire_payment(saferpay_payment)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 

@@ -1,16 +1,4 @@
 module SolidusSixSaferpay
-
-  # TODO: Find out if needed...
-  class InvalidSaferpayPayment < StandardError
-    def initialize(message: "Saferpay Payment is invalid", details: "")
-      super("#{message}: #{details}".strip)
-    end
-
-    def full_message
-      message
-    end
-  end
-
   class Gateway
 
     include Spree::RouteAccess
@@ -42,8 +30,7 @@ module SolidusSixSaferpay
       handle_error(e, initialize_response)
     end
 
-    # TODO: fix signarure
-    def inquire()
+    def inquire(payment_source, options = {})
       raise NotImplementedError, "must be implemented in PaymentPageGateway or TransactionGateway"
     end
 
@@ -95,7 +82,7 @@ module SolidusSixSaferpay
       handle_error(e, refund_response)
     end
 
-    def void(transaction_id, options)
+    def void(transaction_id, options = {})
       transaction_reference = SixSaferpay::TransactionReference.new(transaction_id: transaction_id)
       payment_cancel = SixSaferpay::SixTransaction::Cancel.new(transaction_reference: transaction_reference)
 
