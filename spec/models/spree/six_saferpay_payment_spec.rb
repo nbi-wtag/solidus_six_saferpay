@@ -15,9 +15,10 @@ module Spree
     end
 
     describe '#create_solidus_payment!' do
-      require 'pry'; binding.pry
-
-      expect(payment.address).to eq(order.bill_address)
+      it 'creates a new payment' do
+        require 'pry'; binding.pry
+        # expect(payment.address).to eq(order.bill_address)
+      end
     end
   end
 end
