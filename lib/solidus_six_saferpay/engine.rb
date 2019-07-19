@@ -1,7 +1,5 @@
 module SolidusSixSaferpay
   class Engine < ::Rails::Engine
-    # require 'spree/core'
-
     isolate_namespace SolidusSixSaferpay
 
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
