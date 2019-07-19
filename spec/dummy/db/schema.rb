@@ -10,6 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2019_05_23_075638) do
+
+  create_table "spree_six_saferpay_payments", force: :cascade do |t|
+    t.integer "order_id"
+    t.integer "payment_method_id"
+    t.string "token"
+    t.datetime "expiration"
+    t.string "redirect_url"
+    t.string "transaction_id"
+    t.string "transaction_status"
+    t.datetime "transaction_date"
+    t.string "six_transaction_reference"
+    t.string "display_text"
+    t.string "masked_number"
+    t.string "expiration_year"
+    t.string "expiration_month"
+    t.text "response_hash"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_spree_six_saferpay_payments_on_order_id"
+    t.index ["payment_method_id"], name: "index_spree_six_saferpay_payments_on_payment_method_id"
+    t.index ["six_transaction_reference"], name: "index_spree_six_saferpay_payments_on_six_transaction_reference", unique: true
+    t.index ["token"], name: "index_spree_six_saferpay_payments_on_token", unique: true
+    t.index ["transaction_id"], name: "index_spree_six_saferpay_payments_on_transaction_id", unique: true
+  end
 
 end

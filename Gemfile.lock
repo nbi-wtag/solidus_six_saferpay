@@ -86,6 +86,9 @@ GEM
     execjs (2.7.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
+    factory_bot_rails (5.0.2)
+      factory_bot (~> 5.0.2)
+      railties (>= 4.2.0)
     ffi (1.11.1)
     font-awesome-rails (4.7.0.5)
       railties (>= 3.2, < 6.1)
@@ -212,6 +215,8 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    shoulda-matchers (4.1.1)
+      activesupport (>= 4.2.0)
     six_saferpay (1.2.2)
       activesupport (~> 5.0, >= 5.0.0.0)
     solidus (2.8.3)
@@ -300,8 +305,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  factory_bot
+  factory_bot_rails
   rspec-rails
+  shoulda-matchers
   solidus_six_saferpay!
   sqlite3
 
