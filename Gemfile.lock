@@ -70,6 +70,7 @@ GEM
     carmen (1.1.2)
       activesupport (>= 3.0.0)
     climate_control (0.2.0)
+    coderay (1.1.2)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
       railties (>= 5.2.0)
@@ -150,6 +151,9 @@ GEM
       terrapin (~> 0.6.0)
     paranoia (2.4.2)
       activerecord (>= 4.0, < 6.1)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -306,6 +310,7 @@ PLATFORMS
 
 DEPENDENCIES
   factory_bot_rails
+  pry
   rspec-rails
   shoulda-matchers
   solidus_six_saferpay!
