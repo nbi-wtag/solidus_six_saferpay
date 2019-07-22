@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod::SaferpayPaymentPage < PaymentMethod::SixSaferpayPaymentMethod
+  class PaymentMethod::SaferpayPaymentPage < PaymentMethod::SaferpayPaymentMethod
 
 
     def gateway_class

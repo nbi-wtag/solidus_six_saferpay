@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod::SaferpayTransaction < PaymentMethod::SixSaferpayPaymentMethod
+  class PaymentMethod::SaferpayTransaction < PaymentMethod::SaferpayPaymentMethod
 
     def gateway_class
       ::SolidusSixSaferpay::TransactionGateway

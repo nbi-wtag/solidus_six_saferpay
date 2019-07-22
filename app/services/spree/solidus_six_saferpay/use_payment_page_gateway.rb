@@ -1,9 +1,7 @@
 module Spree
   module SolidusSixSaferpay
     module UsePaymentPageGateway
-      include UseGateway
-
-      private
+      include RouteAccess
 
       def gateway
         ::SolidusSixSaferpay::PaymentPageGateway.new(
