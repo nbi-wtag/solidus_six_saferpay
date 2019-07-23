@@ -1,7 +1,20 @@
-# Spree::Core::Engine.routes.draw do
+Spree::Core::Engine.routes.draw do
 
   namespace :solidus_six_saferpay do
-    get 'payment_page/init/:payment_method_id', to: 'payment_page_checkout#init', as: :payment_page_init
+    namespace :payment_page do
+      get 'init/:payment_method_id', controller: :checkout, action: :init, as: :init, defaults: { format: :json }
+      get :success, controller: :checkout
+      get :fail, controller: :checkout
+    end
+
+    namespace :transaction do
+      get 'init/:payment_method_id', controller: :checkout, action: :init, as: :init, defaults: { format: :json }
+      get :success, controller: :checkout
+      get :fail, controller: :checkout
+    end
+
+    # OLD ROUTES
+    # get 'payment_page/init/:payment_method_id', to: 'payment_page_checkout#init', as: :payment_page_init
     # get 'payment_page_init/:payment_method_id', to: 'payment_page_checkout_controller#init'
     # scope :payment_page do
     #   get 'init/:payment_method_id', controller: 'payment_page_checkout', action: :init, defaults: { format: :json }, as: :payment_page_init
@@ -19,4 +32,4 @@
     # end
   end
 
-# end
+end

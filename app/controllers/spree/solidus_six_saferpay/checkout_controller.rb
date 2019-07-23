@@ -9,6 +9,8 @@ module Spree
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_payment(@order, payment_method)
 
+        require 'pry'; binding.pry
+
         if initialized_payment.success?
           redirect_url = initialized_payment.redirect_url
           render json: { redirect_url: redirect_url }
