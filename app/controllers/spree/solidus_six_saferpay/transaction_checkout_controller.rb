@@ -6,7 +6,7 @@ module Spree
 
       private
 
-      def initialize_checkout(order, payment_method)
+      def initialize_payment(order, payment_method)
         InitializeTransaction.call(order, payment_method)
       end
 

@@ -7,7 +7,7 @@ module Spree
 
       def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
-        initialized_payment = initialize_checkout(@order, payment_method)
+        initialized_payment = initialize_payment(@order, payment_method)
 
         if initialized_payment.success?
           redirect_url = initialized_payment.redirect_url
@@ -71,7 +71,7 @@ module Spree
 
       private
 
-      def initialize_checkout(order, payment_method)
+      def initialize_payment(order, payment_method)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
       end
 

@@ -1,6 +1,6 @@
 RSpec.shared_examples "it uses the payment page gateway" do
 
-  # it_behaves_like "it has route access"
+  it_behaves_like "it has route access"
 
   describe '#gateway' do
     it 'configures the gateway urls correctly' do

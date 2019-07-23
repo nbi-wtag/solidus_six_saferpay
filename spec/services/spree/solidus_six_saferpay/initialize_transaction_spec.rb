@@ -2,7 +2,7 @@ require 'rails_helper'
 
 module Spree
   module SolidusSixSaferpay
-    RSpec.describe InitializePaymentPage do
+    RSpec.describe InitializeTransaction do
 
       let(:order) { create(:order) }
       let(:payment_method) { create(:saferpay_payment_method) }

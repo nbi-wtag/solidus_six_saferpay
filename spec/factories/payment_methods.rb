@@ -10,5 +10,9 @@ FactoryBot.define do
     trait :transaction do
       name { "saferpay transaction" }
     end
+
+    trait :as_iframe do
+      preferred_as_iframe { true }
+    end
   end
 end
