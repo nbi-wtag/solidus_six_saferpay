@@ -1,4 +1,4 @@
-l,et SaferpayPayment = {
+let SaferpayPayment = {
   paymentFormId: "#checkout_form_payment",
   paymentMethodRadioButtonSelector: 'input[type="radio"][name="order[payments_attributes][][payment_method_id]"]',
 
