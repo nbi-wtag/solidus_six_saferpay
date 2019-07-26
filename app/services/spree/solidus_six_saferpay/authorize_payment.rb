@@ -1,6 +1,5 @@
 module Spree
   module SolidusSixSaferpay
-    # TODO: SPEC
     class AuthorizePayment
       attr_reader :saferpay_payment, :order, :success
 

@@ -1,8 +1,6 @@
 module Spree
   module SolidusSixSaferpay
 
-    # TODO: SPEC
-    # TODO: Ensure that we invalidate old payments (they don't get invalidated when already processing)
     class InitializePayment
 
       attr_reader :order, :payment_method, :redirect_url, :success

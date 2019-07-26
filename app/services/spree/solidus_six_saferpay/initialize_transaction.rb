@@ -1,7 +1,6 @@
 module Spree
   module SolidusSixSaferpay
 
-    # TODO: SPEC
     class InitializeTransaction < InitializePayment
       include UseTransactionGateway
 

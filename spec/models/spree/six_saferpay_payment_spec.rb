@@ -13,5 +13,7 @@ module Spree
       it { is_expected.to validate_presence_of :expiration }
     end
   end
+
+  # TODO: SPEC FOR METHODS!
 end
 
