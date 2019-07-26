@@ -18,7 +18,7 @@ module Spree
       end
 
       def call
-        gateway_response = gateway.initialize_checkout(order, payment_method)
+        gateway_response = gateway.initialize_payment(order, payment_method)
 
         if gateway_response.success?
 

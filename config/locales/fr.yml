@@ -14,7 +14,9 @@ fr:
           payment_source_not_created: La source de paiement Six Saferpay n'a pas pu être créée.
         fail:
           payment_failed: Le paiement n'a pas pu être complété.
-      payment_page_checkout:
-        <<: *checkout
-      transaction_checkout:
-        <<: *checkout
+      payment_page:
+        checkout:
+          <<: *checkout
+      transaction:
+        checkout:
+          <<: *checkout

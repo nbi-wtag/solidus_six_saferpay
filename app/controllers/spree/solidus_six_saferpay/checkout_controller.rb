@@ -1,6 +1,5 @@
 module Spree
   module SolidusSixSaferpay
-    # TODO: SPEC
     class CheckoutController < StoreController
 
       before_action :load_order
@@ -8,8 +7,6 @@ module Spree
       def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_payment(@order, payment_method)
-
-        require 'pry'; binding.pry
 
         if initialized_payment.success?
           redirect_url = initialized_payment.redirect_url
@@ -39,15 +36,15 @@ module Spree
         # (cancelled).
         payment_authorization = authorize_payment(saferpay_payment)
 
-        # TODO: CLEANUP
         if payment_authorization.success?
-          processed_authorization = process_authorization(saferpay_payment)
 
+          processed_authorization = process_authorization(saferpay_payment)
           if processed_authorization.success?
             @order.next! if @order.payment?
           else
             flash[:error] = processed_authorization.user_message
           end
+
         else
           payment_inquiry = inquire_payment(saferpay_payment)
           flash[:error] = payment_inquiry.user_message
@@ -64,11 +61,7 @@ module Spree
 
         @redirect_path = order_checkout_path(:payment)
         flash[:error] = payment_inquiry.user_message
-        if saferpay_payment.payment_method.preferred_as_iframe
-          render :iframe_breakout_redirect, layout: false
-        else
-          redirect_to @redirect_path
-        end
+        render :iframe_breakout_redirect, layout: false
       end
 
       private
@@ -83,7 +76,6 @@ module Spree
 
       def process_authorization(saferpay_payment)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
-        ProcessAuthorizedPayment.call(saferpay_payment)
       end
 
       def inquire_payment(saferpay_payment)

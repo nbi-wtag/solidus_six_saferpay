@@ -1,15 +1,14 @@
 module Spree
   class PaymentMethod::SaferpayPaymentMethod < PaymentMethod::CreditCard
-
     include RouteAccess
 
     AVAILABLE_PAYMENT_METHODS = %w(ALIPAY AMEX BANCONTACT BONUS DINERS DIRECTDEBIT EPRZELEWY EPS GIROPAY IDEAL INVOICE JCB MAESTRO MASTERCARD MYONE PAYPAL PAYDIREKT POSTCARD POSTFINANCE SAFERPAYTEST SOFORT TWINT UNIONPAY VISA VPAY)
 
     delegate :try_void, to: :gateway
 
-    preference :as_iframe, :boolean, default: false
+    preference :as_iframe, :boolean, default: true
 
-    preference :liability_shift_required, :boolean, default: true
+    preference :require_liability_shift, :boolean, default: true
 
     # Configure all available Payment Methods for the Saferpay API as
     # preferences

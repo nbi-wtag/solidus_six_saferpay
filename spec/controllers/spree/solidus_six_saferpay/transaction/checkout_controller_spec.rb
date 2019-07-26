@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type: :controller do
+RSpec.describe Spree::SolidusSixSaferpay::Transaction::CheckoutController, type: :controller do
   routes { Spree::Core::Engine.routes }
 
   let(:user) { create(:user) }
   let(:order) { create(:order) }
-  let(:payment_method) { create(:saferpay_payment_method_payment_page) }
+  let(:payment_method) { create(:saferpay_payment_method_transaction) }
 
   let(:subject) { described_class.new }
 
@@ -17,10 +17,10 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
   describe 'GET init' do
     let(:success) { false }
     let(:redirect_url) { '/saferpay/redirect/url' }
-    let(:initialized_payment) { instance_double("Spree::SolidusSixSaferpay::InitializePaymentPage", success?: success, redirect_url: redirect_url) }
+    let(:initialized_payment) { instance_double("Spree::SolidusSixSaferpay::InitializeTransaction", success?: success, redirect_url: redirect_url) }
 
     it 'tries to the saferpay payment' do
-      expect(Spree::SolidusSixSaferpay::InitializePaymentPage).to receive(:call).with(order, payment_method).and_return(initialized_payment)
+      expect(Spree::SolidusSixSaferpay::InitializeTransaction).to receive(:call).with(order, payment_method).and_return(initialized_payment)
 
       get :init, params: { payment_method_id: payment_method.id }
     end
@@ -30,7 +30,7 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
       let(:success) { true }
 
       before do
-        allow(Spree::SolidusSixSaferpay::InitializePaymentPage).to receive(:call).with(order, payment_method).and_return(initialized_payment)
+        allow(Spree::SolidusSixSaferpay::InitializeTransaction).to receive(:call).with(order, payment_method).and_return(initialized_payment)
       end
 
       it 'returns the redirect_url' do
@@ -45,7 +45,7 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
       let(:success) { false }
 
       before do
-        allow(Spree::SolidusSixSaferpay::InitializePaymentPage).to receive(:call).with(order, payment_method).and_return(initialized_payment)
+        allow(Spree::SolidusSixSaferpay::InitializeTransaction).to receive(:call).with(order, payment_method).and_return(initialized_payment)
       end
 
       it 'returns an error' do
@@ -70,12 +70,12 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
     context 'when payment create was successful' do
       let!(:payment) { create(:six_saferpay_payment, order: order) }
       let(:assert_success) { false }
-      let(:payment_assert) { instance_double("Spree::SolidusSixSaferpay::AssertPaymentPage", success?: assert_success) }
-      let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquirePaymentPage", user_message: "payment inquiry message") }
+      let(:payment_assert) { instance_double("Spree::SolidusSixSaferpay::AuthorizeTransaction", success?: assert_success) }
+      let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransaction", user_message: "payment inquiry message") }
 
       it 'asserts the payment' do
-        expect(Spree::SolidusSixSaferpay::AssertPaymentPage).to receive(:call).with(payment).and_return(payment_assert)
-        expect(Spree::SolidusSixSaferpay::InquirePaymentPage).to receive(:call).with(payment).and_return(payment_inquiry)
+        expect(Spree::SolidusSixSaferpay::AuthorizeTransaction).to receive(:call).with(payment).and_return(payment_assert)
+        expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
 
         get :success
       end
@@ -83,14 +83,14 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
       context 'when the payment assert is successful' do
         let(:assert_success) { true }
         let(:process_success) { false }
-        let(:processed_payment) { instance_double("Spree::SolidusSixSaferpay::ProcessPaymentPagePayment", success?: process_success, user_message: "payment processing message") }
+        let(:processed_payment) { instance_double("Spree::SolidusSixSaferpay::ProcessTransactionPayment", success?: process_success, user_message: "payment processing message") }
 
         before do
-          allow(Spree::SolidusSixSaferpay::AssertPaymentPage).to receive(:call).with(payment).and_return(payment_assert)
+          allow(Spree::SolidusSixSaferpay::AuthorizeTransaction).to receive(:call).with(payment).and_return(payment_assert)
         end
 
         it 'processes the asserted payment' do
-          expect(Spree::SolidusSixSaferpay::ProcessPaymentPagePayment).to receive(:call).with(payment).and_return(processed_payment)
+          expect(Spree::SolidusSixSaferpay::ProcessTransactionPayment).to receive(:call).with(payment).and_return(processed_payment)
 
           get :success
         end
@@ -99,7 +99,7 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
           let(:process_success) { true }
 
           before do
-            allow(Spree::SolidusSixSaferpay::ProcessPaymentPagePayment).to receive(:call).with(payment).and_return(processed_payment)
+            allow(Spree::SolidusSixSaferpay::ProcessTransactionPayment).to receive(:call).with(payment).and_return(processed_payment)
           end
 
 
@@ -128,7 +128,7 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
           let(:process_success) { false }
 
           before do
-            allow(Spree::SolidusSixSaferpay::ProcessPaymentPagePayment).to receive(:call).with(payment).and_return(processed_payment)
+            allow(Spree::SolidusSixSaferpay::ProcessTransactionPayment).to receive(:call).with(payment).and_return(processed_payment)
           end
 
           it 'displays an error message' do
@@ -144,17 +144,17 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
         let(:assert_success) { false }
 
         before do
-          allow(Spree::SolidusSixSaferpay::AssertPaymentPage).to receive(:call).with(payment).and_return(payment_assert)
+          allow(Spree::SolidusSixSaferpay::AuthorizeTransaction).to receive(:call).with(payment).and_return(payment_assert)
         end
 
         it 'inquires the payment' do
-          expect(Spree::SolidusSixSaferpay::InquirePaymentPage).to receive(:call).with(payment).and_return(payment_inquiry)
+          expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
 
           get :success
         end
 
         it 'displays an error message' do
-          expect(Spree::SolidusSixSaferpay::InquirePaymentPage).to receive(:call).with(payment).and_return(payment_inquiry)
+          expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
           get :success
 
           expect(flash[:error]).to eq("payment inquiry message")
@@ -165,16 +165,16 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
 
   describe 'GET fail' do
     let!(:payment) { create(:six_saferpay_payment, order: order) }
-    let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquirePaymentPage", user_message: "payment inquiry message") }
+    let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransaction", user_message: "payment inquiry message") }
 
     it 'inquires the payment' do
-      expect(Spree::SolidusSixSaferpay::InquirePaymentPage).to receive(:call).with(payment).and_return(payment_inquiry)
+      expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
 
       get :fail
     end
 
     it 'displays an error message' do
-      expect(Spree::SolidusSixSaferpay::InquirePaymentPage).to receive(:call).with(payment).and_return(payment_inquiry)
+      expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
 
       get :fail
       

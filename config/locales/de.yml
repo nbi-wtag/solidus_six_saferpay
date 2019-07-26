@@ -14,9 +14,11 @@ de:
           payment_source_not_created: Six Saferpay Zahlungsquelle konnte nicht erstellt werden.
         fail:
           payment_failed: Die Zahlung konnte nicht abgeschlossen werden.
-      payment_page_checkout:
-        <<: *checkout
-      transaction_checkout:
-        <<: *checkout
+      payment_page:
+        checkout:
+          <<: *checkout
+      transaction:
+        checkout:
+          <<: *checkout
   six_saferpay:
     error_names:

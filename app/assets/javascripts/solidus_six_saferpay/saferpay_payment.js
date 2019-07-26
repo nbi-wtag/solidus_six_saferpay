@@ -18,10 +18,9 @@ let SaferpayPayment = {
       },
 
       error: function(xhr) {
-        debugger;
-        var errors = $.parseJSON(xhr.responseText).errors;
-        alert(errors);
-        console.info(errors);
+        // debugger;
+        alert(xhr.responseText);
+        console.info(xhr.responseText);
         return false;
       },
     })

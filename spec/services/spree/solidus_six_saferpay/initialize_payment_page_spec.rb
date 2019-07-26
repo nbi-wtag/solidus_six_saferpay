@@ -40,16 +40,16 @@ module Spree
         # stub gateway to return our mock response
         before do
           allow(subject).to receive(:gateway).
-            and_return(double('gateway', initialize_checkout: gateway_response))
+            and_return(double('gateway', initialize_payment: gateway_response))
         end
 
         context 'when not successful' do
           let(:gateway_success) { false }
 
-          it 'sets indicates failure' do
+          it 'indicates failure' do
             subject.call
 
-            expect(subject.success).to be false
+            expect(subject).not_to be_success
           end
 
           it 'does not create a saferpay payment' do
@@ -70,7 +70,7 @@ module Spree
             expect(subject.redirect_url).to eq(redirect_url)
           end
 
-          it 'sets @success to true' do
+          it 'indicates success' do
             subject.call
 
             expect(subject).to be_success

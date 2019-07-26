@@ -17,7 +17,7 @@ module SolidusSixSaferpay
       end
     end
 
-    def initialize_checkout(order, payment_method)
+    def initialize_payment(order, payment_method)
       initialize_response = SixSaferpay::Client.post(
         interface_initialize_object(order, payment_method)
       )

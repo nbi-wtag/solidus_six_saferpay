@@ -22,6 +22,7 @@ module Spree
     serialize :response_hash, Hash
 
     validates :token, :expiration, presence: true
+    validates :token, :transaction_id, :six_transaction_reference, uniqueness: true
 
     def create_solidus_payment!
       payments.create!(order: order, response_code: transaction_id, payment_method: payment_method, amount: order.total, source: self)

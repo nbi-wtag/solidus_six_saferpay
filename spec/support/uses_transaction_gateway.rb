@@ -4,10 +4,7 @@ RSpec.shared_examples "it uses the transaction gateway" do
 
   describe '#gateway' do
     it 'configures the gateway urls correctly' do
-      expect(::SolidusSixSaferpay::TransactionGateway).to receive(:new).with(
-        success_url: Spree::Core::Engine.routes.url_helpers.solidus_six_saferpay_transaction_init_url,
-        fail_url: Spree::Core::Engine.routes.url_helpers.solidus_six_saferpay_transaction_fail_url
-      )
+      expect(::SolidusSixSaferpay::TransactionGateway).to receive(:new)
       subject.gateway
     end
 

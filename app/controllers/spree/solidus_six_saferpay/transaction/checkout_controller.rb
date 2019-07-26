@@ -1,6 +1,5 @@
 module Spree
   module SolidusSixSaferpay
-    # TODO: SPEC
     # explicit parent must be stated, otherwise Spree::CheckoutController has precendence
     module Transaction
       class CheckoutController < SolidusSixSaferpay::CheckoutController
