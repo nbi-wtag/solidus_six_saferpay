@@ -15,6 +15,7 @@ RSpec.shared_examples "it uses the transaction gateway" do
         allow(ENV).to receive(:fetch).with("SIX_SAFERPAY_USERNAME").and_return("username")
         allow(ENV).to receive(:fetch).with("SIX_SAFERPAY_PASSWORD").and_return("password")
         allow(ENV).to receive(:fetch).with("SIX_SAFERPAY_BASE_URL").and_return("base_url")
+        allow(ENV).to receive(:fetch).with("SIX_SAFERPAY_CSS_URL").and_return("css_url")
       end
 
       it 'should return a TransactionGateway' do

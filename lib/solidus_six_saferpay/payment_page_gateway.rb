@@ -35,19 +35,18 @@ module SolidusSixSaferpay
         assert_response
       )
     rescue SixSaferpay::Error => e
-      # TODO: MAYBE BETTER HANDLING FOR FAILED TRANSACTIONS?
       handle_error(e, assert_response)
     end
 
     private
 
+    def interface_initialize_object(order, payment_method)
+      SixSaferpay::SixPaymentPage::Initialize.new(interface_initialize_params(order, payment_method))
+    end
+
     def perform_assert_request(saferpay_payment, options = {})
       payment_page_assert = SixSaferpay::SixPaymentPage::Assert.new(token: saferpay_payment.token)
       SixSaferpay::Client.post(payment_page_assert)
-    end
-
-    def interface_initialize_object(order, payment_method)
-      SixSaferpay::SixPaymentPage::Initialize.new(interface_initialize_params(order, payment_method))
     end
   end
 end

@@ -20,3 +20,34 @@ fr:
       transaction:
         checkout:
           <<: *checkout
+  six_saferpay:
+    error_names:
+      ACTION_NOT_SUPPORTED: l'action demandé n'es pas prise en charge dans le contexte de l'action et ne peut pas être exécutée avec les données de la demande.
+      ALIAS_INVALID: l'alias es inconnu ou est déjà utilisé (à l'enregistrement).
+      AMOUNT_INVALID: le mentant ne correspond pas aux restrictions pour cette action.
+      AUTHENTICATION_FAILED: Mot de passe incorrect, certificat client incorrect, jeton non valide, HMAC incorrect.
+      BLOCKED_BY_RISK_MANAGEMENT: action bloquée par la gestion des risques.
+      CARD_CHECK_FAILED: Numéro de carte ou CVC non valide.
+      CARD_CVC_INVALID: CVC incorrect entré.
+      CARD_CVC_REQUIRED: CVC non entré, mais obligatoire.
+      CARD_EXPIRED: La carte a expiré.
+      COMMUNICATION_FAILED: la communication avec le processeur a échoué.
+      COMMUNICATION_TIMEOUT: Saferpay n'a pas reçu de réponse du système externe à temps. Il est possible qu'une autorisation ait été créée, mais Saferpay ne peut pas le savoir.
+      CONDITION_NOT_SATISFIED: la condition définie dans la demande n'a pas pu être remplie.
+      CURRENCY_INVALID: la devise ne correspond pas à la transaction de devise.
+      GENERAL_DECLINED: transaction rejetée pour une raison inconnue.
+      INTERNAL_ERROR: erreur interne dans Saferpay.
+      NO_CONTRACT: Il n'y a pas de contrat pour la combinaison marque / devise.
+      NO_CREDITS_AVAILABLE: plus aucun crédit disponible pour ce compte.
+      PAYMENTMEANS_INVALID: Offre non valide (par exemple, carte invalide).
+      PERMISSION_DENIED: Aucune autorisation (par exemple, le terminal n'est pas la propriété du client).
+      3DS_AUTHENTICATION_FAILED: L'authentification 3D Secure a échoué - la transaction doit être abandonnée.
+      TOKEN_EXPIRED: le jeton a expiré.
+      TOKEN_INVALID: le jeton n'existe pas pour ce client ou est déjà utilisé.
+      TRANSACTION_ABORTED: La transaction a été annulée par le paiement.
+      TRANSACTION_ALREADY_CAPTURED: transaction déjà enregistrée.
+      TRANSACTION_DECLINED: rejeté par le processeur.
+      TRANSACTION_IN_WRONG_STATE: La transaction est dans un état incorrect.
+      TRANSACTION_NOT_FOUND: La transaction n'a pas pu être trouvée.
+      TRANSACTION_NOT_STARTED: La transaction n'a pas encore été lancée depuis le paiement. Par conséquent, aucun résultat final n'est disponible pour la transaction.
+      VALIDATION_FAILED: la validation a échoué.

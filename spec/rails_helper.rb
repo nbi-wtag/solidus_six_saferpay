@@ -7,6 +7,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# require 'active_support/core_ext/string/deep_symbolize_keys'
+
 require 'factory_bot_rails'
 require 'shoulda/matchers'
 require 'simplecov'
@@ -51,6 +53,9 @@ RSpec.configure do |config|
       with.test_framework :rspec
       with.library :rails
     end
+
+    # include url_helpers in specs
+    include Spree::Core::Engine.routes.url_helpers
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

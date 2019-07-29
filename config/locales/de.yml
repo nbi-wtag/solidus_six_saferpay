@@ -22,3 +22,32 @@ de:
           <<: *checkout
   six_saferpay:
     error_names:
+      ACTION_NOT_SUPPORTED: Die angeforderte Aktion wird im Kontext der Aktion nicht unterstützt un kann mit den Anforderungsdaten nicht ausgeführt werden.
+      ALIAS_INVALID: Der Alias ist nicht bekannt oder wird bereits verwendet (bei Registrierung).
+      AMOUNT_INVALID: Der Betrag entspricht nicht den Einschränkungen für diese Aktion.
+      AUTHENTICATION_FAILED: Falsches Password, falsches Client-Zertifikat, ungültiges Token, falscher HMAC.
+      BLOCKED_BY_RISK_MANAGEMENT: Aktion vom Risikomanagement gesperrt.
+      CARD_CHECK_FAILED: Ungültige Kartennummer oder CVC.
+      CARD_CVC_INVALID: Falscher CVC eingegeben.
+      CARD_CVC_REQUIRED: CVC nicht eingegeben, aber erforderlich.
+      CARD_EXPIRED: Karte abgelaufen.
+      COMMUNICATION_FAILED: Die Kommunikation zum Prozessor ist fehlgeschlagen.
+      COMMUNICATION_TIMEOUT: Saferpay hat nicht rechtzeitig eine Antwort vom externen System erhalten. Es ist möglich, dass eine Autorisierung erstellt wurde, aber Saferpay kann dies nicht wissen.
+      CONDITION_NOT_SATISFIED: Die in der Anfrage definierte Bedingung konnte nicht erfüllt werden.
+      CURRENCY_INVALID: Währung stimmt nicht mit der Währungstransaktion überein.
+      GENERAL_DECLINED: Transaktion aus einem unbekannten Grund abgelehnt.
+      INTERNAL_ERROR: Interner Fehler in Saferpay.
+      NO_CONTRACT: Für die Kombination aus Marke und Währung ist kein Vertrag verfügbar.
+      NO_CREDITS_AVAILABLE: Für dieses Konto ist kein Guthaben mehr verfügbar.
+      PAYMENTMEANS_INVALID: Ungültiges Zahlungsmittel (z. B. ungültige Karte).
+      PERMISSION_DENIED: Keine Berechtigung (z. B. Terminal gehört nicht dem Kunden).
+      3DS_AUTHENTICATION_FAILED: Die 3D-sichere Authentifizierung ist fehlgeschlagen - die Transaktion muss abgebrochen werden.
+      TOKEN_EXPIRED: Das Token ist abgelaufen.
+      TOKEN_INVALID: Das Token ist für diesen Kunden nicht vorhanden oder wird bereits verwendet.
+      TRANSACTION_ABORTED: Die Transaktion wurde von der Bezahlung abgebrochen.
+      TRANSACTION_ALREADY_CAPTURED: Transaktion bereits erfasst.
+      TRANSACTION_DECLINED: Vom Prozessor abgelehnt.
+      TRANSACTION_IN_WRONG_STATE: Transaktion befindet sich in falschem Zustand.
+      TRANSACTION_NOT_FOUND: Transaktion konnte nicht gefunden werden.
+      TRANSACTION_NOT_STARTED: Die Transaktion wurde noch nicht von der Bezahlung gestartet. Daher ist kein endgültiges Ergebnis für die Transaktion verfügbar.
+      VALIDATION_FAILED: Validierung fehlgeschlagen.

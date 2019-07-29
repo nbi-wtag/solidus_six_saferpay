@@ -19,7 +19,7 @@ module Spree
         end
 
         def inquire_payment(saferpay_payment)
-          InquireTransaction.call(saferpay_payment)
+          InquireTransactionPayment.call(saferpay_payment)
         end
       end
     end

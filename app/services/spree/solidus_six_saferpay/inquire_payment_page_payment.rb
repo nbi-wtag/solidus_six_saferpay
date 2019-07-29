@@ -1,7 +1,7 @@
 module Spree
   module SolidusSixSaferpay
     # TODO: SPEC
-    class InquirePaymentPage < InquirePayment
+    class InquirePaymentPagePayment < InquirePayment
       include UsePaymentPageGateway
     end
   end

@@ -13,6 +13,11 @@ module Spree
       end
 
       describe '#call' do
+
+        before do
+          allow(subject).to receive(:gateway).and_return(double('gateway'))
+        end
+
         context 'liability_shift check' do
 
           before do
@@ -214,6 +219,7 @@ module Spree
         end
 
       end
+
     end
   end
 end

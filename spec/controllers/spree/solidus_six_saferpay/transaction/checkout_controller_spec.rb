@@ -71,11 +71,11 @@ RSpec.describe Spree::SolidusSixSaferpay::Transaction::CheckoutController, type:
       let!(:payment) { create(:six_saferpay_payment, order: order) }
       let(:assert_success) { false }
       let(:payment_assert) { instance_double("Spree::SolidusSixSaferpay::AuthorizeTransaction", success?: assert_success) }
-      let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransaction", user_message: "payment inquiry message") }
+      let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransactionPayment", user_message: "payment inquiry message") }
 
       it 'asserts the payment' do
         expect(Spree::SolidusSixSaferpay::AuthorizeTransaction).to receive(:call).with(payment).and_return(payment_assert)
-        expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
+        expect(Spree::SolidusSixSaferpay::InquireTransactionPayment).to receive(:call).with(payment).and_return(payment_inquiry)
 
         get :success
       end
@@ -148,13 +148,13 @@ RSpec.describe Spree::SolidusSixSaferpay::Transaction::CheckoutController, type:
         end
 
         it 'inquires the payment' do
-          expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
+          expect(Spree::SolidusSixSaferpay::InquireTransactionPayment).to receive(:call).with(payment).and_return(payment_inquiry)
 
           get :success
         end
 
         it 'displays an error message' do
-          expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
+          expect(Spree::SolidusSixSaferpay::InquireTransactionPayment).to receive(:call).with(payment).and_return(payment_inquiry)
           get :success
 
           expect(flash[:error]).to eq("payment inquiry message")
@@ -165,16 +165,16 @@ RSpec.describe Spree::SolidusSixSaferpay::Transaction::CheckoutController, type:
 
   describe 'GET fail' do
     let!(:payment) { create(:six_saferpay_payment, order: order) }
-    let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransaction", user_message: "payment inquiry message") }
+    let(:payment_inquiry) { instance_double("Spree::SolidusSixSaferpay::InquireTransactionPayment", user_message: "payment inquiry message") }
 
     it 'inquires the payment' do
-      expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
+      expect(Spree::SolidusSixSaferpay::InquireTransactionPayment).to receive(:call).with(payment).and_return(payment_inquiry)
 
       get :fail
     end
 
     it 'displays an error message' do
-      expect(Spree::SolidusSixSaferpay::InquireTransaction).to receive(:call).with(payment).and_return(payment_inquiry)
+      expect(Spree::SolidusSixSaferpay::InquireTransactionPayment).to receive(:call).with(payment).and_return(payment_inquiry)
 
       get :fail
       

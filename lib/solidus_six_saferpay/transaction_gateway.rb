@@ -10,7 +10,6 @@ module SolidusSixSaferpay
       )
     end
 
-    # TODO
     def inquire(saferpay_payment, options = {})
       transaction_inquire = SixSaferpay::SixTransaction::Inquire.new(transaction_reference: saferpay_payment.transaction_id)
       inquire_response = SixSaferpay::Client.post(transaction_inquire)
