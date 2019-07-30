@@ -38,16 +38,16 @@ Finally, add the following javascript to your `application.js` manifest file:
 ## Configuration and Usage
 After adding the `solidus_six_saferpay` gem to your Solidus Rails app, you can create new payment methods `Saferpay Payment Page` and `Saferpay Transaction` in the admin backend under "Settings" > "Payment". When adding a new Saferpay payment method, you can configure the payment method with the information you have received from SIX when creating a new test account.
 
-### Payment Page Interface
-When you choose the Payment Page as the payment interface, you can:
+### Configuration Options
 
-* choose if you want to display the payment page in an iFrame directly on the "Payment" checkout page or if you want to redirect to the payment page when the user advances the checkout process
-* choose which payment methods you want to make available for your users. Note that some of these don't seem to work properly. This may depend on your contract with SIX. If you select no specific payment methods, then everything will be available.
+Notable configuration options are:
 
-### Transaction Interface
-When you choose the Transaction interface, you can 
+* `as_iframe`: If checked, the payment form is displayed on the "Payment" checkout page. If unchecked, the user needs to select a payment method and then proceed with the checkout to be redirected to the saferpay payment interface.
+* `require_liability_shift`: If checked, payments are only accepted if saferpay grants liability shift for the payment. If a payment has no liability shift, then the checkout process fails and the customer needs to use other means of payment.
 
-### Confirm Page
+All other configuration options are restrictions for available payment methods. If you don't check any payment methods, then the interface will make all payment methods available. If you restrict the available payment methods for the user, the interface will reflect your choice. If you select only a single payment method, the user is directly forwarded to the input form for the selected payment method without having to choose themselves.
+
+### Customizing the Confirm Page
 If you want to display the masked number on the confirm page, you must override the default `_payment.html.erb` partial of spree so that the provided partial can be rendered (instead of just displaying the name of your payment method).
 
 ```ruby
