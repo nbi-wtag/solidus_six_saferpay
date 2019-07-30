@@ -56,8 +56,7 @@ If you want to display the masked number on the confirm page, you must override 
 <!-- Add this code to render our provided partial that shows the masked number -->
 <% if source.is_a?(Spree::SixSaferpayPayment) %>
   <%= render source, payment: payment %>
-<% end %>
-
+  
 <!-- turn this "if" into an "elsif" to prevent rendering the payment method name -->
 <% elsif source.is_a?(Spree::CreditCard) %>
   <span class="cc-type">
