@@ -15,13 +15,16 @@ module SolidusSixSaferpay
 
       response(
         true,
-        "Saferpay Payment Page assert response: #{assert_response.to_h}",
+        "Saferpay Payment Page inquire (assert) response: #{inquire_response.to_h}",
         inquire_response
       )
     rescue SixSaferpay::Error => e
       handle_error(e, inquire_response)
     end
 
+    # NOTE: Since PaymentPage payments are automatically authorized,
+    # the passed amount has no effect because the payment is automatically
+    # authorized for the full amount
     def authorize(_amount, saferpay_payment, options = {})
       assert(saferpay_payment, options)
     end
