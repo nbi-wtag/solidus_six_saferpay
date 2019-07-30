@@ -50,16 +50,16 @@ All other configuration options are restrictions for available payment methods. 
 ### Customizing the Confirm Page
 If you want to display the masked number on the confirm page, you must override the default `_payment.html.erb` partial of spree so that the provided partial can be rendered (instead of just displaying the name of your payment method).
 
-```ruby
-// This is the default "app/views/spree/payments/_payment.html.erb" (including our modification)
+```erb
+<!-- This is the default "app/views/spree/payments/_payment.html.erb" (including our modification) -->
 <% source = payment.source %>
 
-// Add this code to render our provided partial that shows the masked number
+<!-- Add this code to render our provided partial that shows the masked number -->
 <% if source.is_a?(Spree::SixSaferpayPayment) %>
   <%= render source, payment: payment %>
 <% end %>
 
-// turn this "if" into an "elsif" to prevent rendering the payment method name
+<!-- turn this "if" into an "elsif" to prevent rendering the payment method name -->
 <% elsif source.is_a?(Spree::CreditCard) %>
   <span class="cc-type">
     <% unless (cc_type = source.cc_type).blank? %>
