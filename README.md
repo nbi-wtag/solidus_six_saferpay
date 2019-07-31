@@ -10,11 +10,13 @@ gem 'solidus_six_saferpay'
 ```
 
 And then execute:
+
 ```bash
 $ bundle
 ```
 
 Or install it yourself as:
+
 ```bash
 $ gem install solidus_six_saferpay
 ```
@@ -63,8 +65,8 @@ After adding the `solidus_six_saferpay` gem to your Solidus Rails app, you can c
 
 Notable configuration options are:
 
-* `as_iframe`: If checked, the payment form is displayed on the "Payment" checkout page. If unchecked, the user needs to select a payment method and then proceed with the checkout to be redirected to the saferpay payment interface.
-* `require_liability_shift`: If checked, payments are only accepted if saferpay grants liability shift for the payment. If a payment has no liability shift, then the checkout process fails and the customer needs to use other means of payment.
+* `as_iframe`: If checked, the payment form is displayed on the "Payment" checkout page. If unchecked, the user needs to select a payment method and then proceed with the checkout to be redirected to the Saferpay payment interface.
+* `require_liability_shift`: If checked, payments are only accepted if Saferpay grants liability shift for the payment. If a payment has no liability shift, then the checkout process fails and the customer needs to use other means of payment.
 
 All other configuration options are restrictions for available payment methods. If you don't check any payment methods, then the interface will make all payment methods available. If you restrict the available payment methods for the user, the interface will reflect your choice. If you select only a single payment method, the user is directly forwarded to the input form for the selected payment method without having to choose themselves.
 
@@ -130,7 +132,7 @@ Additionally, already authorized payments are voided so that no money stays allo
 In this section, we provide detailed information about the checkout flow and its implementation. Note that the flow is almost identical for both the PaymentPage and the Transaction interface.
 Because of this, there is usually a base service class that contains the logic, and then there are subclass services for the PaymentPage and Transaction interface that configure the base service class.
 
-The same pattern also exists for the gateway: The `SolidusSixSaferpay::Gateway` implements the common logic, and the `PaymentPageGateway` and `TransactionGateway` only implement gateway actions that are unique for this interface.
+The same pattern also exists for the gateway: The `SolidusSixSaferpay::Gateway` implements the common logic, and the `SolidusSixSaferpay::PaymentPageGateway` and `SolidusSixSaferpay::TransactionGateway` only implement gateway actions that are unique for this interface.
 
 #### Checkout: Payment Initialize
 During the "Payment" step of the checkout process, solidus renders a partial for all active and available payment methods. Our partial is called `_saferpay_payment`.
@@ -153,17 +155,17 @@ In this `#fail` action, we try to find the `SixSaferpayPayment` record based on 
 If the user has entered the payment information successfully, we can perform an authorize request. Because this request is different depending on the payment interface, it is explained for each interface below.
 When the authorize request is successful, we update the `SixSaferpayPayment` record with the received data. This data most importantly includes:
 
-* the `TransactionId`
-* the `TransactionStatus`
-* the `TransactionDate`
-* the `SixTransactionReference`
-* the `DisplayText`
+* `TransactionId`
+* `TransactionStatus`
+* `TransactionDate`
+* `SixTransactionReference`
+* `DisplayText`
 
-And, if a credit card was used
+And, if a credit card was used:
 
-* the `MaskedNumber`
-* the `ExpirationYear`
-* the `ExpirationMonth`
+* `MaskedNumber`
+* `ExpirationYear`
+* `ExpirationMonth`
 
 ##### PaymentPage Interface
 If the PaymentPage interface is used, then the payment is authorized directly when the user submits the Saferpay form. In this case, we can not perform an authorize request and instead perform an assert request to gather information about the payment.
