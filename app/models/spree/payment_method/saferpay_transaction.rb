@@ -6,7 +6,7 @@ module Spree
     end
 
     def init_path
-      url_helpers.solidus_six_saferpay_transaction_init_path
+      url_helpers.solidus_six_saferpay_transaction_initialize_payment_path
     end
   end
 end
