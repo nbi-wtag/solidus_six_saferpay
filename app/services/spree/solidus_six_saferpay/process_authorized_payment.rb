@@ -67,7 +67,7 @@ module Spree
 
       def check_liability_shift_requirements!
         if require_liability_shift? && !liability_shifted?
-          raise ::SolidusSixSaferpay::InvalidSaferpayPayment.new(details: "Liability Shift not granted for payment")
+          raise ::SolidusSixSaferpay::InvalidSaferpayPayment.new(details: I18n.t(:liability_shift_not_granted, scope: [:solidus_six_saferpay, :errors]))
         end
       end
 

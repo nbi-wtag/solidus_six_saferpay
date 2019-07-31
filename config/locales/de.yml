@@ -20,6 +20,10 @@ de:
       transaction:
         checkout:
           <<: *checkout
+  solidus_six_saferpay:
+    errors:
+      general_error: Bezahlungsfehler
+      liability_shift_not_granted:  Haftungsumkehr wurde abgelehnt
   six_saferpay:
     error_names:
       ACTION_NOT_SUPPORTED: Die angeforderte Aktion wird im Kontext der Aktion nicht unterstützt un kann mit den Anforderungsdaten nicht ausgeführt werden.
@@ -44,7 +48,7 @@ de:
       3DS_AUTHENTICATION_FAILED: Die 3D-sichere Authentifizierung ist fehlgeschlagen - die Transaktion muss abgebrochen werden.
       TOKEN_EXPIRED: Das Token ist abgelaufen.
       TOKEN_INVALID: Das Token ist für diesen Kunden nicht vorhanden oder wird bereits verwendet.
-      TRANSACTION_ABORTED: Die Transaktion wurde von der Bezahlung abgebrochen.
+      TRANSACTION_ABORTED: Die Transaktion wurde von Kundin/Kunde abgebrochen.
       TRANSACTION_ALREADY_CAPTURED: Transaktion bereits erfasst.
       TRANSACTION_DECLINED: Vom Prozessor abgelehnt.
       TRANSACTION_IN_WRONG_STATE: Transaktion befindet sich in falschem Zustand.

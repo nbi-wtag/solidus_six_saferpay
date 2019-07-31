@@ -1,6 +1,6 @@
 module SolidusSixSaferpay
   class InvalidSaferpayPayment < StandardError
-    def initialize(message: "Saferpay Payment is invalid", details: "")
+    def initialize(message: I18n.t(:general_error, scope: [:solidus_six_saferpay, :errors]), details: "")
       super("#{message}: #{details}".strip)
     end
 

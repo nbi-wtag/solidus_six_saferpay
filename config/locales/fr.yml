@@ -20,6 +20,9 @@ fr:
       transaction:
         checkout:
           <<: *checkout
+  solidus_six_saferpay:
+    errors:
+      liability_shift_not_granted:  Le transfert de responsabilité a été rejeté
   six_saferpay:
     error_names:
       ACTION_NOT_SUPPORTED: l'action demandé n'es pas prise en charge dans le contexte de l'action et ne peut pas être exécutée avec les données de la demande.

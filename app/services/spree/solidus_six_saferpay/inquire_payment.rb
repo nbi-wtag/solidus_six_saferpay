@@ -23,7 +23,7 @@ module Spree
         if inquiry.success?
           saferpay_payment.update_attributes(response_hash: inquiry.api_response.to_h)
         else
-          @user_message = I18n.t(inquiry.error_name, scope: [:six_saferpay, :error_names])
+          @user_message = "#{I18n.t(:general_error, scope: [:solidus_six_saferpay, :errors])}: #{I18n.t(inquiry.error_name, scope: [:six_saferpay, :error_names])}"
         end
         
         @success = true

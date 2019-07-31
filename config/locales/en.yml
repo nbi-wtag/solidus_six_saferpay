@@ -20,6 +20,10 @@ en:
       transaction:
         checkout:
           <<: *checkout
+  solidus_six_saferpay:
+    errors:
+      general_error: Payment Error
+      liability_shift_not_granted:  Liability Shift was rejected
   six_saferpay:
     error_names:
       ACTION_NOT_SUPPORTED:	The requested action is not supported in the given context or the action can't be executed with the request data.
