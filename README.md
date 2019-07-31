@@ -25,12 +25,9 @@ After installing the gem, copy the migrations to your host application and migra
 $ bundle exec rails g solidus_six_saferpay:install
 ```
 
-Finally, add the following javascript to your `application.js` manifest file:
+Finally, add the following javascript to your `application.js` manifest file below the `//= require spree` line:
 
 ```javascript
-//= ...
-//= require spree <= This must be above the saferpay_payment line
-//= ...
 //= require solidus_six_saferpay/saferpay_payment
 ```
 
@@ -113,47 +110,61 @@ The same pattern also exists for the gateway: The `SolidusSixSaferpay::Gateway` 
 #### Checkout: Payment Initialize
 During the "Payment" step of the checkout process, solidus renders a partial for all active and available payment methods. Our partial is called `_saferpay_payment`.
 When the partial is loaded, an AJAX request goes to the `CheckoutController#initialize_payment` action.
-From there, we make a request to the Saferpay server to initialize the Payment. This request happens via the SixSaferpay Gateway and is abstracted away in the `InitializePayment` parent service.
+From there, we make a request to the Saferpay server to initialize the Payment. This request happens via the SixSaferpay Gateway and is abstracted away in the `InitializePayment` service.
 
-Iff this request is successful, a new `SaferpayPayment` object is created. This object contains the Saferpay `Token` for the current payment and links it with the current `Spree::Order` and `Spree::PaymentMethod`. It also stores the response of the `PaymentInitialize` request in hash form.
+If this request is successful, a new `SixSaferpayPayment` object is created. This object contains the Saferpay `Token` for the current payment and links it with the current `Spree::Order` and the used `Spree::PaymentMethod`. It also stores the response of the `PaymentInitialize` request in hash form.
 
 If the initialize request is not successful, then the user is shown an error message.
 
-When the `PaymentInitialize` request was successful, the user can now enter the payment information in the form provided by Saferpay. When the form is submitted, Saferpay then redirects either to a success url or a fail url depending on the submitted information and performed actions of the user.
-
-#### Checkout: Payment Initialize 
-
 ##### Success
 If Saferpay can successfully process the user-submitted information, then Saferpay redirects the user to a `SuccessUrl`, which is configured to be handled by `CheckoutController#success`.
-In this `#success` action, we find the `SixSaferpayPayment` record with the correct token that was created in the `PaymentInitialize` request. If this token is found, a `PaymentAuthorize` request is performed (abstracted away the `AuthorizePayment` service).
+In this `#success` action, we find the `SixSaferpayPayment` record with the correct token that was created in the `PaymentInitialize` request. If the `SixSaferpayPayment` is found, a `PaymentAuthorize` request is performed (abstracted away the `AuthorizePayment` service).
 
 ##### Fail
 If Saferpay can not successfully process the submitted information or the payment fails for some other reason, Saferpay redirects to a `FailUrl`, which is configured to be handled by `SaferpayPaymentPageController#fail`.
-In this `#fail` action, we try to find the `SixSaferpayPayment` record based on the token that was created in the `PaymentPageInitialize` request. If this token is found, a `PaymentPageInquire` request is performed to gather information about the failure.
+In this `#fail` action, we try to find the `SixSaferpayPayment` record based on the token that was created in the `PaymentPageInitialize` request. If the `SixSaferpayPayment` is found, a `PaymentPageInquire` request is performed to gather information about the failure, and the user is redirected to the "Payment" step of the checkout process and shown an error with information about the failure. If the record can not be found, then a generic error is displayed.
 
 #### Checkout: Payment Authorize
-If the user has entered the payment information successfully, we can perform an authorize request. Because this request is different depending on the payment interface, it is explained for each interface.
+If the user has entered the payment information successfully, we can perform an authorize request. Because this request is different depending on the payment interface, it is explained for each interface below.
+When the authorize request is successful, we update the `SixSaferpayPayment` record with the received data. This data most importantly includes:
 
-##### PaymentPage 
+* the `TransactionId`
+* the `TransactionStatus`
+* the `TransactionDate`
+* the `SixTransactionReference`
+* the `DisplayText`
+
+And, if a credit card was used
+
+* the `MaskedNumber`
+* the `ExpirationYear`
+* the `ExpirationMonth`
+
+##### PaymentPage Interface
 If the PaymentPage interface is used, then the payment is authorized directly when the user submits the Saferpay form. In this case, we can not perform an authorize request and instead perform an assert request to gather information about the payment.
 After performing the assert request, we update the `SixSaferpayPayment` record based on the data from the assert request.
 
 ##### Transaction Interface
 If the Transaction interface is used, then the payment must be authorized after it has been initialized. Therefore, we perform an authorize request to reserve the requested amount.
+If the authorize request is successful, we update the `SixSaferpayPayment` based on the data from the authorize request.
 
 
 #### Checkout: Payment Validation and Processing
-Iff the authorize request is successful, the received information is validated and processed in the `ProcessPaymentPagePayment` service.
+If the authorize request is successful, the received information is validated and processed in the `ProcessPaymentPagePayment` service.
 At the moment, the following validations are performed:
 
-* Liability Shift: We check if the liability shift has been granted for the payment. If this is not the case and the payment method requires a liability shift (based on the `require_liability_shift` option), the validation fails
-* Associated Order: We check if the order referenced by Saferpay matches the order that is being processed
+* Liability Shift: We check if the liability shift has been granted for the payment
+* Payment Status: We check if the payment status of the Saferpay payment is `AUTHORIZED`
+* Order Reference: We check if the order referenced by Saferpay matches the order that is being processed
 * Matching Amount and Currency: We check if the Saferpay amount and currency match the total and currency of the processed order
 
-If the payment validation is successful, a new `Spree::Payment` is created based on the data stored in the `SixSaferpayPayment` record.
+If any of these checks fail, then the payment process is aborted and the user must restart the payment flow.
 
-If the payment validation or processing fails, then the user is redirected to the "Payment" step of the checkout process and shown an error message.
+If the payment validation is successful, all previously existing payments for this order that are still valid are cancelled. 
+After cancelling old payments, a new `Spree::Payment` is created based on the data stored in the `SixSaferpayPayment` record.
+This ensures that only one valid payment exists from this point onward.
 
+If the payment processing fails, then the user is redirected to the "Payment" step of the checkout process and shown an error message.
 
 #### Checkout: Confirm
 When the user confirms the purchase in the checkout process, the saferpay payment is automatically captured. This action is triggered in the following way:
@@ -168,18 +179,12 @@ When the user confirms the purchase in the checkout process, the saferpay paymen
 8. `Spree::PaymentMethod::SaferpayPaymentPage#gateway_class` defines the gateway to be the `SolidusSixSaferpay::PaymentPageGateway`
 9. Therefore, the `PaymentPageGateway#purchase` action is called
 
-#### Checkout: Payment Initialize Fail
-
 #### Checkout: Payment Cancel
 When a user cancels a payment, the `CheckoutController` receives a `fail` request and handles this request in the `#fail` action. The result is that the user is shown an error message stating that the payment was aborted.
 
-
-
-
-
-
 ## Contributing
-Contribution directions go here.
+This gem is available for everyone to use, however chances are that its implementation is still tailored towards our custom solidus-based shop.
+If you see improvements to be made, feel free to fork the gem and submit pull requests. All incoming pull requests will be discussed, but it's possible that we will reject pull requests that break functionality for our use case.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
