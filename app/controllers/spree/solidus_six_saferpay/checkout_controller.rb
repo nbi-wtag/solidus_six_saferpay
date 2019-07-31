@@ -4,7 +4,7 @@ module Spree
 
       before_action :load_order
 
-      def initialize_payment
+      def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_payment(@order, payment_method)
 
