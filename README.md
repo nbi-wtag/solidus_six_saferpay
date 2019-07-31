@@ -25,11 +25,36 @@ After installing the gem, copy the migrations to your host application and migra
 $ bundle exec rails g solidus_six_saferpay:install
 ```
 
-Finally, add the following javascript to your `application.js` manifest file below the `//= require spree` line:
+Add the following javascript to your `application.js` manifest file below the `//= require spree` line:
 
 ```javascript
 //= require solidus_six_saferpay/saferpay_payment
 ```
+
+Configure the credentials for the Saferpay API. These credentials must be set as ENV variables.
+You can find the required information in the Saferpay interface under https://test.saferpay.com/BO/Settings/Terminal
+
+```bash
+SIX_SAFERPAY_CUSTOMER_ID='XXXXXX'
+SIX_SAFERPAY_TERMINAL_ID='XXXXXXXX'
+SIX_SAFERPAY_USERNAME='your api basic auth username'
+SIX_SAFERPAY_PASSWORD='your api basic auth password'
+SIX_SAFERPAY_BASE_URL='https://test.saferpay.com/api/'
+SIX_SAFERPAY_CSS_URL='' # currently not tested
+```
+
+Configure the host for your application so that we can give Saferpay an absolute URL to redirect on success or failure
+
+```
+# in development.rb
+Spree::Core::Engine.routes.default_url_options { 'http://localhost:3000' }
+```
+
+```
+# in production.rb
+Spree::Core::Engine.routes.default_url_options { 'https://url-to-your-solidus-shop.tld' }
+```
+
 
 ## Configuration and Usage
 After adding the `solidus_six_saferpay` gem to your Solidus Rails app, you can create new payment methods `Saferpay Payment Page` and `Saferpay Transaction` in the admin backend under "Settings" > "Payment". When adding a new Saferpay payment method, you can configure the payment method with the information you have received from SIX when creating a new test account.
