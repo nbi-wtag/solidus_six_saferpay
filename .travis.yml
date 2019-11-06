@@ -8,6 +8,7 @@ before_install:
 
 script:
   - "spec/dummy/bin/setup"
+  - bundle exec rake
 
 notifications:
   slack: fadendaten:tWoet2mtObvbwSZSyUAY93jl
