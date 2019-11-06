@@ -6,8 +6,8 @@ rvm:
 before_install:
   - gem install bundler -v 2.0.1
 
-install:
-  - "bin/setup"
+script:
+  - bundle exec rake
 
 notifications:
   slack: fadendaten:tWoet2mtObvbwSZSyUAY93jl
