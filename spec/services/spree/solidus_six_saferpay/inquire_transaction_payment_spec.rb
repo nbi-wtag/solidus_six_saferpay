@@ -26,6 +26,7 @@ module Spree
           let(:error_name) { "VALIDATION_FAILED" }
           let(:error_message) { "Request validation failed" }
           let(:api_response) { nil }
+          let(:translated_general_error) { "General Error" }
           let(:translated_user_message) { "User Message" }
 
           let(:gateway_response) do
@@ -48,10 +49,12 @@ module Spree
           end
 
           it 'sets the user message according to the api error code' do
-            expect(I18n).to receive(:t).with(error_name, scope: [:six_saferpay, :error_names]).and_return(translated_user_message)
+            expect(I18n).to receive(:t).with(:general_error, scope: [:solidus_six_saferpay, :errors]).once.and_return(translated_general_error)
+            expect(I18n).to receive(:t).with(error_name, scope: [:six_saferpay, :error_names]).once.and_return(translated_user_message)
+
             subject.call
 
-            expect(subject.user_message).to eq(translated_user_message)
+            expect(subject.user_message).to eq("#{translated_general_error}: #{translated_user_message}")
           end
         end
 

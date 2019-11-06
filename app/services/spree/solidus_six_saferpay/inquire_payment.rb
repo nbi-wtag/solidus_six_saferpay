@@ -1,7 +1,6 @@
 module Spree
   module SolidusSixSaferpay
     # TODO: This is almost the same as AuthorizePayment
-    # TODO: SPEC
     class InquirePayment
       attr_reader :saferpay_payment, :order, :success, :user_message
 
@@ -23,7 +22,9 @@ module Spree
         if inquiry.success?
           saferpay_payment.update_attributes(response_hash: inquiry.api_response.to_h)
         else
-          @user_message = "#{I18n.t(:general_error, scope: [:solidus_six_saferpay, :errors])}: #{I18n.t(inquiry.error_name, scope: [:six_saferpay, :error_names])}"
+          general_error = I18n.t(:general_error, scope: [:solidus_six_saferpay, :errors])
+          specific_error = I18n.t(inquiry.error_name, scope: [:six_saferpay, :error_names])
+          @user_message = "#{general_error}: #{specific_error}"
         end
         
         @success = true
