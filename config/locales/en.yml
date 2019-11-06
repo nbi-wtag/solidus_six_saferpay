@@ -1,11 +1,6 @@
 ---
 en:
   spree:
-    six_saferpay_payments:
-      six_saferpay_payment:
-        checkout: Reserved
-        pending: Reserved
-        void: Reservation cancelled 
     solidus_six_saferpay:
       checkout: &checkout
         init:
