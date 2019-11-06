@@ -4,7 +4,8 @@ rvm:
   - 2.3.8
 
 before_install:
-  - gem install bundler
+  - gem install bundler -v 1.14.3
+
 
 notifications:
   slack: fadendaten:tWoet2mtObvbwSZSyUAY93jl
