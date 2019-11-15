@@ -256,7 +256,7 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    six_saferpay (2.1.0)
+    six_saferpay (2.1.1)
       activesupport (~> 5.0, >= 5.0.0.0)
     solidus (2.9.3)
       solidus_api (= 2.9.3)
