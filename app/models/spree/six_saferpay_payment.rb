@@ -1,7 +1,5 @@
 module Spree
 
-  # TODO: SPEC
-  #
   # attributes
   # * :token
   # * :expiration

@@ -12,7 +12,6 @@ module Spree
           redirect_url = initialized_payment.redirect_url
           render json: { redirect_url: redirect_url }
         else
-          # TODO: I18n
           render json: { errors: t('.checkout_not_initialized') }, status: 422
         end
       end
