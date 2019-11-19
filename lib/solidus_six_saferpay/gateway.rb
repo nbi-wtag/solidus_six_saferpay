@@ -154,7 +154,6 @@ module SolidusSixSaferpay
         phone: nil,
         email: nil,
       )
-      # TODO: Not sure if i18n is always present. Maybe make this conditional?
       payer = SixSaferpay::Payer.new(language_code: I18n.locale, billing_address: billing_address, delivery_address: delivery_address)
 
       params = { payment: payment, payer: payer }

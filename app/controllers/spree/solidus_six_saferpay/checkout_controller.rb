@@ -20,7 +20,6 @@ module Spree
         saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
         if saferpay_payment.nil?
-          # TODO: Proper error handling
           raise Spree::Core::GatewayError, t('.payment_source_not_created')
         end
 

@@ -1,6 +1,5 @@
 module Spree
   module SolidusSixSaferpay
-    # TODO: This is almost the same as InquirePayment
     class AuthorizePayment
       attr_reader :saferpay_payment, :order, :success
 

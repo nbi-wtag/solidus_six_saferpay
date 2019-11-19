@@ -25,8 +25,6 @@ module SolidusSixSaferpay
 
     # NOTE: Saferpay does not allow authorization for partial amounts.
     # Therefore, the given amount is ignored
-    # TODO: Add a condition based on the require_liability_shift option of the
-    # payment_method
     def authorize(_amount, saferpay_payment, options = {})
       transaction_authorize = SixSaferpay::SixTransaction::Authorize.new(token: saferpay_payment.token)
       authorize_response = SixSaferpay::Client.post(transaction_authorize)
