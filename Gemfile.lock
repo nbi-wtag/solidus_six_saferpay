@@ -2,11 +2,11 @@ PATH
   remote: .
   specs:
     solidus_six_saferpay (0.1.0)
-      rails (>= 5.1.0)
-      rails-i18n (>= 5.1.0)
-      six_saferpay
-      solidus (>= 2.7.1)
-      solidus_support
+      rails (~> 5.1)
+      rails-i18n (~> 5.1)
+      six_saferpay (~> 2.1)
+      solidus (~> 2.7)
+      solidus_support (~> 0.3.3)
 
 GEM
   remote: https://rubygems.org/
@@ -350,16 +350,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  database_cleaner
-  factory_bot_rails
-  ffaker
-  pry
-  pry-rails
-  rspec-rails
-  shoulda-matchers
-  simplecov
+  database_cleaner (~> 1.7)
+  factory_bot_rails (~> 5.0)
+  ffaker (~> 2.11)
+  pry (~> 0.12)
+  pry-rails (~> 0.3)
+  rspec-rails (~> 3.8)
+  shoulda-matchers (~> 4.1)
+  simplecov (~> 0.17)
   solidus_six_saferpay!
-  sqlite3
+  sqlite3 (~> 1.4)
 
 BUNDLED WITH
    2.0.1
