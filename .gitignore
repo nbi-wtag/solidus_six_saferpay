@@ -3,5 +3,6 @@ log/*.log
 pkg/
 spec/dummy
 coverage/
+Gemfile.lock
 
 .DS_Store
