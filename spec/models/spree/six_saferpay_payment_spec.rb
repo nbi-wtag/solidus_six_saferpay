@@ -32,10 +32,16 @@ module Spree
       end
     end
 
-    context 'when the payment is authorized' do
-      let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+    describe '#payment_means' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.payment_means).to be_nil
+        end
+      end
 
-      describe '#payment_means' do
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns a SixSaferpay::ResponsePaymentMeans' do
           expect(payment.payment_means).to be_a(SixSaferpay::ResponsePaymentMeans)
         end
@@ -51,8 +57,18 @@ module Spree
           expect(payment.payment_means.card.country_code).to eq("US")
         end
       end
+    end
 
-      describe '#transaction' do
+    describe '#transaction' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.transaction).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns a SixSaferpay::Transaction' do
           expect(payment.transaction).to be_a(SixSaferpay::Transaction)
         end
@@ -64,8 +80,17 @@ module Spree
           expect(payment.transaction.amount.currency_code).to eq("CHF")
         end
       end
+    end
 
-      describe '#liability' do
+    describe '#liability' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.liability).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
         it 'returns a SixSaferpay::Liability' do
           expect(payment.liability).to be_a(SixSaferpay::Liability)
         end
@@ -75,38 +100,98 @@ module Spree
           expect(payment.liability.liable_entity).to eq("ThreeDs")
         end
       end
+    end
 
-      describe '#card' do
+    describe '#card' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.card).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns a SixSaferpay::ResponseCard' do
           expect(payment.card).to be_a(SixSaferpay::ResponseCard)
         end
       end
+    end
 
-      describe '#name' do
+    describe '#name' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.name).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns the card holder name' do
           expect(payment.name).to eq("John Doe")
         end
       end
+    end
 
-      describe '#brand_name' do
+    describe '#brand_name' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.brand_name).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns the brand name' do
           expect(payment.brand_name).to eq("MasterCard")
         end
       end
+    end
 
-      describe '#month' do
+    describe '#month' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.month).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns the card expiration month' do
           expect(payment.month).to eq(7)
         end
       end
+    end
 
-      describe '#year' do
+    describe '#year' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.year).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns the card expiration year' do
           expect(payment.year).to eq(2019)
         end
       end
+    end
 
-      describe '#icon_name' do
+    describe '#icon_name' do
+      context 'when the payment is still unprocessed' do
+        it 'returns nil' do
+          expect(payment.icon_name).to be_nil
+        end
+      end
+
+      context 'when the payment is authorized' do
+        let(:payment) { FactoryBot.create(:six_saferpay_payment, :authorized) }
+
         it 'returns a downcased brand name' do
           expect(payment.icon_name).to eq("mastercard")
         end

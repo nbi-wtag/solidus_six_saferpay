@@ -30,40 +30,53 @@ module Spree
       @address ||= order.bill_address
     end
 
+    # This memoization only works if response_payment_means is not nil.
     def payment_means
-      @payment_means ||= ::SixSaferpay::ResponsePaymentMeans.new(response_hash[:payment_means])
+      @payment_means ||= begin
+         if payment_means_response = response_hash[:payment_means]
+           ::SixSaferpay::ResponsePaymentMeans.new(payment_means_response)
+         end
+       end
     end
 
     def transaction
-      @transaction ||= ::SixSaferpay::Transaction.new(response_hash[:transaction])
+      @transaction ||= begin
+         if transaction_response = response_hash[:transaction]
+           ::SixSaferpay::Transaction.new(transaction_response)
+         end
+       end
     end
 
     def liability
-      @liability ||= ::SixSaferpay::Liability.new(response_hash[:liability])
+      @liability ||= begin
+         if liability_response = response_hash[:liability]
+           ::SixSaferpay::Liability.new(liability_response)
+         end
+       end
     end
 
     def card
-      payment_means.card
+      payment_means&.card
     end
 
     def name
-      card.holder_name
+      card&.holder_name
     end
 
     def brand_name
-      payment_means.brand.name
+      payment_means&.brand&.name
     end
 
     def month
-      card.exp_month
+      card&.exp_month
     end
 
     def year
-      card.exp_year
+      card&.exp_year
     end
 
     def icon_name
-      payment_means.brand.payment_method.downcase
+      payment_means&.brand&.payment_method&.downcase
     end
   end
 end
