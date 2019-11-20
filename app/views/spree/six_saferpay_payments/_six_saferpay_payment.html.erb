@@ -2,8 +2,8 @@
 <% container_class = "saferpay-payment #{payment.state}" %>
 <div class="<%= container_class %>">
   <div class="credit-card">
-    <span><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{saferpay_payment.icon_name}.png" %></span>
-    <span><%= saferpay_payment.display_text %></span>
+    <div class="cc-image-container"><%= image_tag "solidus_six_saferpay/credit_cards/icons/#{saferpay_payment.icon_name}.png", class: "cc-img" %></div>
+    <div class="cc-number"><%= saferpay_payment.display_text %></div>
   </div>
   <div>
     <div class="amount">
