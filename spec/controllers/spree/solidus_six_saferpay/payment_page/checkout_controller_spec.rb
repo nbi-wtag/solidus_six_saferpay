@@ -177,7 +177,7 @@ RSpec.describe Spree::SolidusSixSaferpay::PaymentPage::CheckoutController, type:
       expect(Spree::SolidusSixSaferpay::InquirePaymentPagePayment).to receive(:call).with(payment).and_return(payment_inquiry)
 
       get :fail
-      
+
       expect(flash[:error]).to eq("payment inquiry message")
     end
 
