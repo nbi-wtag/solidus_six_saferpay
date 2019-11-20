@@ -28,7 +28,6 @@ module Spree
 
       rescue ::SolidusSixSaferpay::InvalidSaferpayPayment => e
         cancel_saferpay_payment
-        # TODO: Check if messages from liability shift check and PaymentValidator are appropriate for user!
         @user_message = e.full_message
         @success = false
 
