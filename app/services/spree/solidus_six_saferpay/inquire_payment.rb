@@ -25,7 +25,7 @@ module Spree
           specific_error = I18n.t(inquiry.error_name, scope: [:six_saferpay, :error_names])
           @user_message = "#{general_error}: #{specific_error}"
         end
-        
+
         @success = true
 
         self
