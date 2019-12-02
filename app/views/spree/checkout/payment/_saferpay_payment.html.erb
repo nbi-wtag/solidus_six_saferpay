@@ -1,4 +1,8 @@
 <% payment_container_id = "saferpay-payment-container-#{payment_method.id}" %>
+<div>
+  DEBUG REDIRECT URL =>
+  <span id="debug-redirect-url"></span>
+</div>
 <% if payment_method.preferred_as_iframe %>
   <iframe class="saferpay-iframe" width='100%' height='550px' id="<%= payment_container_id %>" src="" frameborder="0">
   </iframe>
