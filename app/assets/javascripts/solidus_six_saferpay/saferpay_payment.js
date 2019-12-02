@@ -14,6 +14,7 @@ let SaferpayPayment = {
       dataType: 'json',
       success: function(data) {
         var redirectUrl = data.redirect_url;
+        $('#debug-redirect-url').html(redirectUrl);
         callback(callbackParams, redirectUrl);
       },
 
@@ -29,7 +30,6 @@ let SaferpayPayment = {
     $(".saferpay-iframe").not(containerId).addClass("loading-animation");
     $(".saferpay-iframe").not(containerId).attr("src", "");
     $(containerId).removeClass('loading-animation');
-    $('#debug-redirect-url').innerHTML = redirectUrl;
     $(containerId).attr('src', redirectUrl);
 
     $(window).bind("message", function (e) {
