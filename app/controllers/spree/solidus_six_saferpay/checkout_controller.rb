@@ -6,17 +6,23 @@ module Spree
 
       def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
+
+        puts "INIT: PERFORM INITIALIZE REQUEST"
         initialized_payment = initialize_payment(@order, payment_method)
 
         if initialized_payment.success?
+          puts "INIT: INITIALIZE SUCCESS!"
           redirect_url = initialized_payment.redirect_url
+          puts "INIT: SUCCESS RESPONSE: { redirect_url: #{redirect_url} }"
           render json: { redirect_url: redirect_url }
         else
+          puts "INIT: ERROR!"
           render json: { errors: t('.checkout_not_initialized') }, status: 422
         end
       end
 
       def success
+        puts "SUCCESS: FIND EXISTING SAFERPAY PAYMENT"
         saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
         if saferpay_payment.nil?
