@@ -4,6 +4,8 @@ module Spree
 
       before_action :load_order
 
+      after_action :allow_embed, only: [:success, :fail]
+
       def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_payment(@order, payment_method)
@@ -63,6 +65,11 @@ module Spree
       end
 
       private
+
+      def allow_embed
+        # allow response to be embedded in iFrame
+        response.headers.except! 'X-Frame-Options'
+      end
 
       def initialize_payment(order, payment_method)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"
