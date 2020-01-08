@@ -18,19 +18,14 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", "~> 5.1"
   spec.add_dependency "solidus", "~> 2.7"
-  spec.add_dependency "solidus_support", "~> 0.1"
+  spec.add_dependency "solidus_dev_support", "~> 0.1"
   spec.add_dependency "rails-i18n", "~> 5.1"
   spec.add_dependency "six_saferpay", "~> 2.2"
 
   spec.add_development_dependency "sqlite3", "~> 1.4"
-  spec.add_development_dependency "rspec-rails", "~> 3.8"
   spec.add_development_dependency "factory_bot_rails", "~> 5.0"
   spec.add_development_dependency "shoulda-matchers", "~> 4.1"
   spec.add_development_dependency "pry", "~> 0.12"
   spec.add_development_dependency "pry-rails", "~> 0.3"
   spec.add_development_dependency "simplecov", "~> 0.17"
-
-  # required by solidus_support
-  spec.add_development_dependency "database_cleaner", "~> 1.7"
-  spec.add_development_dependency "ffaker", "~> 2.11"
 end
