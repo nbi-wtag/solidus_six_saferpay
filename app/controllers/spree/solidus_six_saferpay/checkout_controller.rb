@@ -4,8 +4,6 @@ module Spree
 
       before_action :load_order
 
-      after_action :allow_embed, only: [:success, :fail]
-
       def init
         payment_method = Spree::PaymentMethod.find(params[:payment_method_id])
         initialized_payment = initialize_payment(@order, payment_method)
@@ -22,7 +20,7 @@ module Spree
         saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
         if saferpay_payment.nil?
-          raise Spree::Core::GatewayError, t('.payment_source_not_created')
+          raise Spree::Core::GatewayError, t('.saferpay_payment_not_found')
         end
 
         # NOTE: PaymentPage payments are authorized directly. Instead, we
@@ -57,19 +55,18 @@ module Spree
       def fail
         saferpay_payment = Spree::SixSaferpayPayment.where(order_id: @order.id).order(:created_at).last
 
-        payment_inquiry = inquire_payment(saferpay_payment)
+        if saferpay_payment
+          payment_inquiry = inquire_payment(saferpay_payment)
+          flash[:error] = payment_inquiry.user_message
+        else
+          flash[:error] = I18n.t(:general_error, scope: [:solidus_six_saferpay, :errors])
+        end
 
         @redirect_path = order_checkout_path(:payment)
-        flash[:error] = payment_inquiry.user_message
         render :iframe_breakout_redirect, layout: false
       end
 
       private
-
-      def allow_embed
-        # allow response to be embedded in iFrame
-        response.headers.except! 'X-Frame-Options'
-      end
 
       def initialize_payment(order, payment_method)
         raise NotImplementedError, "Must be implemented in PaymentPageCheckoutController or TransactionCheckoutController"

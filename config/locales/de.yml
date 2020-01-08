@@ -6,7 +6,7 @@ de:
         init:
           checkout_not_initialized: Zahlung konnte nicht gestartet werden.
         success:
-          payment_source_not_created: Six Saferpay Zahlungsquelle konnte nicht erstellt werden.
+          saferpay_payment_not_found: Six Saferpay Zahlung kann nicht gefunden werden.
         fail:
           payment_failed: Die Zahlung konnte nicht abgeschlossen werden.
       payment_page:
