@@ -3,6 +3,7 @@ log/*.log
 pkg/
 spec/dummy
 coverage/
+.idea/
 Gemfile.lock
 
 .DS_Store
